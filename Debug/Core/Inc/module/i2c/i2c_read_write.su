@@ -1,0 +1,2 @@
+i2c_read_write.c:13:9:write8	24	static
+i2c_read_write.c:21:9:read8	24	static

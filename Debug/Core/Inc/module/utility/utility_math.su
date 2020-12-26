@@ -1,0 +1,4 @@
+utility_math.c:8:10:MAP	16	static
+utility_math.c:14:7:MAPF	16	static
+utility_math.c:21:8:roll_from_accel	32	static
+utility_math.c:25:8:pitch_from_accel	40	static

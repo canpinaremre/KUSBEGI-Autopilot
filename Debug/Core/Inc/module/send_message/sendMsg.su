@@ -1,0 +1,3 @@
+sendMsg.c:11:6:sendInt	48	static
+sendMsg.c:18:6:sendFloat	56	static
+sendMsg.c:25:6:sendString	16	static
