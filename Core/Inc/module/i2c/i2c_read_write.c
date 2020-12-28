@@ -24,3 +24,11 @@ uint8_t read8(I2C_HandleTypeDef *huart,uint8_t device,uint8_t reg){
 	HAL_I2C_Master_Receive(huart, device, &buffer_i2c[1], 1, I2C_RECEIVE_TIMEOUT);
 	return buffer_i2c[1];
 }
+
+//uint32_t read24(I2C_HandleTypeDef *huart,uint8_t device,uint8_t reg){
+//	buffer_i2c[0] = reg;
+//	HAL_I2C_Master_Transmit(huart, device, buffer_i2c, 1, I2C_TRANSMIT_TIMEOUT);
+//	HAL_I2C_Master_Receive(huart, device, &buffer_i2c[1], 3, I2C_RECEIVE_TIMEOUT);
+//
+//	return (buffer_i2c[3]) | ((buffer_i2c[2]) << 8) | ((buffer_i2c[1]) << 16);
+//}

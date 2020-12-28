@@ -11,6 +11,7 @@
 #include <drivers/imu/imu.h>
 #include <lib/pid/pid.h>
 #include "stm32f4xx_hal.h"
+#include <module/send_message/sendMsg.h>
 
 #define OUTPUT_MIXER_MAX_PWM 2000
 #define OUTPUT_MIXER_MIN_PWM 1000
@@ -65,8 +66,9 @@ RC_INPUT rc_input;
 PIDController pid_roll,pid_pitch,pid_altitude,pid_yaw;
 IMU imu;
 
+
 /* This function initiliaze IMU, PID, RC_input and output_mixer */
-uint8_t init_output_mixer(OUTPUT_MIXER *output_mixer,I2C_HandleTypeDef *huart);
+uint8_t init_output_mixer(OUTPUT_MIXER *output_mixer,I2C_HandleTypeDef *huartI2C,UART_HandleTypeDef* huart);
 
 /* This function calculates PID values with IMU and RC readings*/
 uint8_t calculate_pid_values(OUTPUT_MIXER *output_mixer,RC_INPUT *rc_input,IMU *imu);
@@ -82,6 +84,8 @@ uint8_t update_imu(OUTPUT_MIXER *output_mixer, I2C_HandleTypeDef *huartI2C);
 
 /* This function updates the rc and output_mixer struct */
 uint8_t update_rc(OUTPUT_MIXER *output_mixer, UART_HandleTypeDef *huartRC);
+
+uint8_t update_barometer(OUTPUT_MIXER *output_mixer, I2C_HandleTypeDef *huartI2C);
 
 
 /* #ifndef OUTPUT_MIXER_H */

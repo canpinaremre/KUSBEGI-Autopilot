@@ -10,13 +10,14 @@
 #include "stm32f4xx_hal.h"
 #include <drivers/imu/imu.h>
 #include <lib/output_mixer/output_mixer.h>
+#include <module/send_message/sendMsg.h>
 
-#define LOOP1FREQ 1000 		//Hz
-#define LOOP2FREQ 500 		//Hz
-#define LOOP3FREQ 250		//Hz
-#define LOOP4FREQ 100		//Hz
-#define LOOP5FREQ 20		//Hz
-#define LOOP6FREQ 1			//Hz
+#define LOOP1DELAY_MS 1000 		//1 Hz
+#define LOOP2DELAY_MS 2000 		//0.5 Hz
+#define LOOP3DELAY_MS 250		//4 Hz
+#define LOOP4DELAY_MS 100		//10 Hz
+#define LOOP5DELAY_MS 10		//100 Hz
+#define LOOP6DELAY_MS 5			//200 Hz
 
 typedef enum{
 	MODE_STABILIZE,
@@ -66,16 +67,27 @@ typedef struct{
 	uint8_t mc_battery_status;
 	uint8_t mc_kill_switch;
 
-}KUSBEGI;
+	uint16_t PWM_US_MOTOR[4];
 
+}KUSBEGI;
 
 OUTPUT_MIXER output_mixer;
 
+uint32_t kusbegi_tick;
+
 /* This function initialize all Flight Controller */
-uint8_t kusbegi_init(I2C_HandleTypeDef *huart,KUSBEGI *kusbegi);
+uint8_t kusbegi_init(I2C_HandleTypeDef *huartI2C,KUSBEGI *kusbegi,UART_HandleTypeDef* huart);
 
 /* This is the main loop function */
-void kusbegi_loop(void);
+void kusbegi_loop(UART_HandleTypeDef* huart,I2C_HandleTypeDef *huartI2C,KUSBEGI *kusbegi);
+
+uint32_t last_tick_l1,last_tick_l2,last_tick_l3,last_tick_l4,last_tick_l5,last_tick_l6;
+void loop1(UART_HandleTypeDef* huart);
+void loop2(UART_HandleTypeDef* huart,I2C_HandleTypeDef *huartI2C);
+void loop3(UART_HandleTypeDef* huart);
+void loop4(UART_HandleTypeDef* huart,KUSBEGI *kusbegi,OUTPUT_MIXER *output_mixer);
+void loop5(UART_HandleTypeDef* huart);
+void loop6(UART_HandleTypeDef* huart);
 
 /* #ifndef KUSBEGI_AUTOPILOT_H */
 #endif

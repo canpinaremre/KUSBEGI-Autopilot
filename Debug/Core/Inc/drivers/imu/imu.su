@@ -2,3 +2,8 @@ imu.c:10:9:init_imu	16	static
 imu.c:49:9:read_imu	16	static
 imu.c:63:9:reset_imu	16	static
 imu.c:67:9:set_imu	16	static
+imu.c:74:9:read_barometer	24	static
+imu.c:102:6:delay_ms	16	static
+imu.c:120:8:i2c_reg_write	16	static
+imu.c:146:8:i2c_reg_read	32	static
+imu.c:171:6:print_rslt	24	static

@@ -32,10 +32,13 @@ Core/Src/stm32f4xx_hal_msp.o: ../Core/Src/stm32f4xx_hal_msp.c \
  ../Core/Inc/lib/kusbegi_autopilot/kusbegi_autopilot.h \
  ../Core/Inc/drivers/imu/imu.h ../Core/Inc/drivers/BNO055/BNO055.h \
  ../Core/Inc/module/i2c/i2c_read_write.h \
+ ../Core/Inc/drivers/BMP280/BMP280.h \
+ ../Core/Inc/drivers/BMP280/bmp280_defs.h \
  ../Core/Inc/lib/output_mixer/output_mixer.h \
  ../Core/Inc/lib/rc_input/rc_input_mixer.h \
  ../Core/Inc/module/utility/utility_math.h \
- ../Core/Inc/lib/rc_input/rc_input_sbus.h ../Core/Inc/lib/pid/pid.h
+ ../Core/Inc/lib/rc_input/rc_input_sbus.h ../Core/Inc/lib/pid/pid.h \
+ ../Core/Inc/module/send_message/sendMsg.h
 
 ../Core/Inc/main.h:
 
@@ -107,6 +110,10 @@ Core/Src/stm32f4xx_hal_msp.o: ../Core/Src/stm32f4xx_hal_msp.c \
 
 ../Core/Inc/module/i2c/i2c_read_write.h:
 
+../Core/Inc/drivers/BMP280/BMP280.h:
+
+../Core/Inc/drivers/BMP280/bmp280_defs.h:
+
 ../Core/Inc/lib/output_mixer/output_mixer.h:
 
 ../Core/Inc/lib/rc_input/rc_input_mixer.h:
@@ -116,3 +123,5 @@ Core/Src/stm32f4xx_hal_msp.o: ../Core/Src/stm32f4xx_hal_msp.c \
 ../Core/Inc/lib/rc_input/rc_input_sbus.h:
 
 ../Core/Inc/lib/pid/pid.h:
+
+../Core/Inc/module/send_message/sendMsg.h:

@@ -16,6 +16,7 @@ uint8_t buffer_i2c[2];
 
 uint8_t write8(I2C_HandleTypeDef *huart,uint8_t device,uint8_t reg,uint8_t val);
 uint8_t read8(I2C_HandleTypeDef *huart,uint8_t device,uint8_t reg);
+//uint32_t read24(I2C_HandleTypeDef *huart,uint8_t device,uint8_t reg);
 
 /* #ifndef I2C_READ_WRITE_H */
 #endif

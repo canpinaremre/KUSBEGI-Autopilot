@@ -19,6 +19,7 @@ OBJCOPY_BIN :=
 
 # Every subdirectory with source files must be described here
 SUBDIRS := \
+Core/Inc/drivers/BMP280 \
 Core/Inc/drivers/BNO055 \
 Core/Inc/drivers/imu \
 Core/Inc/lib/kusbegi_autopilot \
