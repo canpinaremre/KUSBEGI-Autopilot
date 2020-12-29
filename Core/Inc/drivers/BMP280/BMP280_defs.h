@@ -124,37 +124,14 @@ extern "C" {
 #define BMP280_SPI_INTF                      UINT8_C(0)
 #define BMP280_I2C_INTF                      UINT8_C(1)
 
-/*! @name Return codes */
-/*! @name Success code*/
-#define BMP280_OK                            INT8_C(0)
-#define BMP280_BOND_WIRE_OK                  INT8_C(0)
-
-/*! @name Error codes */
-#define BMP280_E_NULL_PTR                    INT8_C(-1)
-#define BMP280_E_DEV_NOT_FOUND               INT8_C(-2)
-#define BMP280_E_INVALID_LEN                 INT8_C(-3)
-#define BMP280_E_COMM_FAIL                   INT8_C(-4)
-#define BMP280_E_INVALID_MODE                INT8_C(-5)
-#define BMP280_E_BOND_WIRE                   INT8_C(-6)
-#define BMP280_E_IMPLAUS_TEMP                INT8_C(-7)
-#define BMP280_E_IMPLAUS_PRESS               INT8_C(-8)
-#define BMP280_E_CAL_PARAM_RANGE             INT8_C(-9)
-#define BMP280_E_UNCOMP_TEMP_RANGE           INT8_C(-10)
-#define BMP280_E_UNCOMP_PRES_RANGE           INT8_C(-11)
-#define BMP280_E_UNCOMP_TEMP_AND_PRESS_RANGE INT8_C(-12)
-#define BMP280_E_UNCOMP_DATA_CALC            INT8_C(-13)
-#define BMP280_E_32BIT_COMP_TEMP             INT8_C(-14)
-#define BMP280_E_32BIT_COMP_PRESS            INT8_C(-15)
-#define BMP280_E_64BIT_COMP_PRESS            INT8_C(-16)
-#define BMP280_E_DOUBLE_COMP_TEMP            INT8_C(-17)
-#define BMP280_E_DOUBLE_COMP_PRESS           INT8_C(-18)
-
 /*! @name Chip IDs for samples and mass production parts */
 #define BMP280_CHIP_ID1                      UINT8_C(0x56)
 #define BMP280_CHIP_ID2                      UINT8_C(0x57)
 #define BMP280_CHIP_ID3                      UINT8_C(0x58)
 
 /*! @name I2C addresses */
+#define BMP280_ADDR_R						 UINT8_C(0xED)
+#define BMP280_ADDR_W						 UINT8_C(0xED)
 #define BMP280_I2C_ADDR_PRIM                 UINT8_C(0x76)
 #define BMP280_I2C_ADDR_SEC                  UINT8_C(0x77)
 

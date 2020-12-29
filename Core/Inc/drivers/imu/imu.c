@@ -7,7 +7,9 @@
 #include "imu.h"
 
 
-uint8_t init_imu(IMU *imu,I2C_HandleTypeDef *huart){
+int8_t init_imu(IMU *imu,I2C_HandleTypeDef *huartI2C){
+	int8_t rslt;
+
 	imu->eulerXYZ[0] = 0;
 	imu->eulerXYZ[1] = 0;
 	imu->eulerXYZ[2] = 0;
@@ -40,63 +42,160 @@ uint8_t init_imu(IMU *imu,I2C_HandleTypeDef *huart){
 	imu->ypr[0] = 0;
 	imu->ypr[1] = 0;
 	imu->ypr[2] = 0;
-#ifdef Selected_IMU_BNO055
-	return BNO055_Init(huart, OPERATION_MODE_NDOF, 10);
-#endif
-	return 1;
-}
-
-uint8_t read_imu(IMU *imu,I2C_HandleTypeDef *huart){
 
 #ifdef Selected_IMU_BNO055
 
-	BNO055_Read_Acc(huart, imu->accelXYZ);
-	BNO055_Read_Eul(huart, imu->eulerXYZ);
+	rslt = BNO055_Init(huartI2C, OPERATION_MODE_NDOF, 10);
+	if(rslt != BNO055_OK){
+		return rslt;
+	}
 
-
+/* #ifdef Selected_IMU_BNO055 */
 #endif
 
+#ifdef Selected_BAR_BMP280
 
-	return 1;
+	//init Temp
+	temp32 = 0;
+	temp = 0;
+
+	//init Barometer
+	/* Map the delay function pointer with the function responsible for implementing the delay */
+	bmp.delay_ms = delay_ms;
+
+	/* Assign device I2C address based on the status of SDO pin (GND for PRIMARY(0x76) & VDD for SECONDARY(0x77)) */
+	bmp.dev_id = BMP280_ADDR_R;
+
+	/* Select the interface mode as I2C */
+	bmp.intf = BMP280_I2C_INTF;
+
+	/* Map the I2C read & write function pointer with the functions responsible for I2C bus transfer */
+	bmp.read = i2c_reg_read;
+	bmp.write = i2c_reg_write;
+
+	rslt = bmp280_init(&bmp, huartI2C);
+	if (rslt != BMP280_OK) {
+		return rslt;
+	}
+
+	rslt = bmp280_get_config(&conf, &bmp, huartI2C);
+	if (rslt != BMP280_OK) {
+		return rslt;
+	}
+	conf.filter = BMP280_FILTER_COEFF_2;
+	conf.os_temp = BMP280_OS_4X;
+	/* Pressure oversampling set at 4x */
+	conf.os_pres = BMP280_OS_4X;
+
+	/* Setting the output data rate as 1HZ(1000ms) */
+	conf.odr = BMP280_ODR_1000_MS;
+
+	rslt = bmp280_set_config(&conf, &bmp, huartI2C);
+	if (rslt != BMP280_OK) {
+		return rslt;
+	}
+
+	/* Always set the power mode after setting the configuration */
+	rslt = bmp280_set_power_mode(BMP280_NORMAL_MODE, &bmp, huartI2C);
+	if (rslt != BMP280_OK) {
+		return rslt;
+	}
+
+/* #ifdef Selected_BAR_BMP280 */
+#endif
+
+	return IMU_INIT_OK;
 }
 
-uint8_t reset_imu(IMU *imu,I2C_HandleTypeDef *huart){
-	return 1;
+int8_t read_imu(IMU *imu,I2C_HandleTypeDef *huart){
+	int8_t rslt;
+
+#ifdef Selected_IMU_BNO055
+
+	rslt = BNO055_Read_Acc(huart, imu->accelXYZ);
+	if (rslt != BNO055_OK) {
+		return rslt;
+	}
+	rslt = BNO055_Read_Eul(huart, imu->eulerXYZ);
+	if (rslt != BNO055_OK) {
+		return rslt;
+	}
+	rslt = BNO055_Read_Qua(huart, imu->quaternionWXYZ);
+	if (rslt != BNO055_OK) {
+		return rslt;
+	}
+	rslt = BNO055_Read_Lia(huart, imu->liaXYZ);
+	if (rslt != BNO055_OK) {
+		return rslt;
+	}
+
+/* #ifdef Selected_IMU_BNO055 */
+#endif
+
+	return IMU_READ_OK;
 }
 
-uint8_t set_imu(IMU *imu,I2C_HandleTypeDef *huart){
-	return 1;
+int8_t reset_imu(IMU *imu,I2C_HandleTypeDef *huart){
+	int8_t rslt;
+	rslt = BNO055_E_EMPTY_FUNCTION;
+	return rslt;
+}
+
+int8_t set_imu(IMU *imu,I2C_HandleTypeDef *huart){
+	int8_t rslt;
+	rslt = BNO055_E_EMPTY_FUNCTION;
+	return rslt;
 }
 
 
 #ifdef Selected_BAR_BMP280
 
-uint8_t read_barometer(IMU *imu,I2C_HandleTypeDef *huartI2C){
+int8_t read_barometer(IMU *imu,I2C_HandleTypeDef *huartI2C){
+	int8_t rslt;
 
-	bmp280_rslt = bmp280_get_uncomp_data(&ucomp_data, &bmp,huartI2C);
-
+	rslt = bmp280_get_uncomp_data(&ucomp_data, &bmp, huartI2C);
+	if (rslt != BMP280_OK) {
+		return rslt;
+	}
 	/* Getting the compensated pressure using 32 bit precision */
-	bmp280_rslt = bmp280_get_comp_pres_32bit(&pres32, ucomp_data.uncomp_press, &bmp,huartI2C);
-
+	rslt = bmp280_get_comp_pres_32bit(&pres32, ucomp_data.uncomp_press, &bmp,
+			huartI2C);
+	if (rslt != BMP280_OK) {
+		return rslt;
+	}
 	/* Getting the compensated pressure using 64 bit precision */
-	bmp280_rslt = bmp280_get_comp_pres_64bit(&pres64, ucomp_data.uncomp_press, &bmp,huartI2C);
-
+	rslt = bmp280_get_comp_pres_64bit(&pres64, ucomp_data.uncomp_press, &bmp,
+			huartI2C);
+	if (rslt != BMP280_OK) {
+		return rslt;
+	}
 	/* Getting the compensated pressure as floating point value */
-	bmp280_rslt = bmp280_get_comp_pres_double(&pres, ucomp_data.uncomp_press, &bmp,huartI2C);
-
+	rslt = bmp280_get_comp_pres_double(&pres, ucomp_data.uncomp_press, &bmp,
+			huartI2C);
+	if (rslt != BMP280_OK) {
+		return rslt;
+	}
 	/* Reading the raw data from sensor */
-	bmp280_rslt = bmp280_get_uncomp_data(&ucomp_data, &bmp,huartI2C);
-
+	rslt = bmp280_get_uncomp_data(&ucomp_data, &bmp, huartI2C);
+	if (rslt != BMP280_OK) {
+		return rslt;
+	}
 	/* Getting the 32 bit compensated temperature */
-	bmp280_rslt = bmp280_get_comp_temp_32bit(&temp32, ucomp_data.uncomp_temp, &bmp,huartI2C);
-
+	rslt = bmp280_get_comp_temp_32bit(&temp32, ucomp_data.uncomp_temp, &bmp,
+			huartI2C);
+	if (rslt != BMP280_OK) {
+		return rslt;
+	}
 	/* Getting the compensated temperature as floating point value */
-	bmp280_rslt = bmp280_get_comp_temp_double(&temp, ucomp_data.uncomp_temp, &bmp,huartI2C);
-
+	rslt = bmp280_get_comp_temp_double(&temp, ucomp_data.uncomp_temp, &bmp,
+			huartI2C);
+	if (rslt != BMP280_OK) {
+		return rslt;
+	}
 	imu->pressure = pres64 / 256;
 	imu->temperature = temp;
 
-	return 1;
+	return IMU_READ_OK;
 }
 
 void delay_ms(uint32_t period_ms)
@@ -119,15 +218,16 @@ void delay_ms(uint32_t period_ms)
  */
 int8_t i2c_reg_write(uint8_t i2c_addr, uint8_t reg_addr, uint8_t *reg_data, uint16_t length,I2C_HandleTypeDef *huartI2C)
 {
+	int8_t rslt;
 //	bmp_i2c_buff[0] = reg_addr;
 //	for(uint8_t i=0;i<length;i++){
 //		bmp_i2c_buff[i+1] = reg_data[i];
 //	}
 //
 //	HAL_I2C_Master_Transmit(huartI2C, i2c_addr, bmp_i2c_buff, (length + 1), I2C_TRANSMIT_TIMEOUT);
-	write8(huartI2C,0XEC,reg_addr,*reg_data);
+	rslt = write8(huartI2C,0XEC,reg_addr,*reg_data);
 
-    return 0;
+    return rslt;
 }
 
 /*!
@@ -145,61 +245,24 @@ int8_t i2c_reg_write(uint8_t i2c_addr, uint8_t reg_addr, uint8_t *reg_data, uint
  */
 int8_t i2c_reg_read(uint8_t i2c_addr, uint8_t reg_addr, uint8_t *reg_data, uint16_t length,I2C_HandleTypeDef *huartI2C)
 {
+	int8_t rslt;
 	bmp_i2c_buff[0] = reg_addr;
 
 
-	HAL_I2C_Master_Transmit(huartI2C, i2c_addr, bmp_i2c_buff, 1, I2C_TRANSMIT_TIMEOUT);
-	HAL_I2C_Master_Receive(huartI2C, i2c_addr, &bmp_i2c_buff[1], length, I2C_RECEIVE_TIMEOUT);
+	rslt = HAL_I2C_Master_Transmit(huartI2C, i2c_addr, bmp_i2c_buff, 1, I2C_TRANSMIT_TIMEOUT);
+	if (rslt != HAL_OK) {
+		return rslt;
+	}
+	rslt = HAL_I2C_Master_Receive(huartI2C, i2c_addr, &bmp_i2c_buff[1], length, I2C_RECEIVE_TIMEOUT);
 	for (uint8_t i = 0; i < length; i++) {
 		reg_data[i] = bmp_i2c_buff[i + 1];
 	}
-	//*reg_data = read8(huartI2C,0xED,reg_addr);
 
-    return 0;
+    return rslt;
 }
 
 
 
-/*!
- *  @brief Prints the execution status of the APIs.
- *
- *  @param[in] api_name : name of the API whose execution status has to be printed.
- *  @param[in] rslt     : error code returned by the API whose execution status has to be printed.
- *
- *  @return void.
- */
-void print_rslt(const char api_name[], int8_t rslt,IMU *imu)
-{
-    if (rslt != BMP280_OK)
-    {
-    	//TODO: Better error catch
-    	imu->temperature = -1.0f;
-//        printf("%s\t", api_name);
-//        if (rslt == BMP280_E_NULL_PTR)
-//        {
-//            printf("Error [%d] : Null pointer error\r\n", rslt);
-//        }
-//        else if (rslt == BMP280_E_COMM_FAIL)
-//        {
-//            printf("Error [%d] : Bus communication failed\r\n", rslt);
-//        }
-//        else if (rslt == BMP280_E_IMPLAUS_TEMP)
-//        {
-//            printf("Error [%d] : Invalid Temperature\r\n", rslt);
-//        }
-//        else if (rslt == BMP280_E_DEV_NOT_FOUND)
-//        {
-//            printf("Error [%d] : Device not found\r\n", rslt);
-//        }
-//        else
-//        {
-//            /* For more error codes refer "*_defs.h" */
-//            printf("Error [%d] : Unknown error code\r\n", rslt);
-//        }
-    }
-}
-
-
-
+/* #ifdef Selected_BAR_BMP280 */
 #endif
 

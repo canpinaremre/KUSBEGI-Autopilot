@@ -4,11 +4,12 @@
  * Language:  C
  */
 
-#ifndef BNO055_H
-#define BNO055_H
+#ifndef __BNO055_H__
+#define __BNO055_H__
 
 #include "stm32f4xx_hal.h"
 #include <module/i2c/i2c_read_write.h>
+#include <lib/parameters/parameters.h>
 
 #define BNO055_READ_ADDR 0x51 //1010001 0x29 is 7 bit address
 #define BNO055_WRITE_ADDR 0x50 //1010000 0x29 is 7 bit address
@@ -205,46 +206,66 @@ typedef enum {
 uint8_t buffer[9];
 int16_t data_read[5];
 
+/*!
+ * @brief This API resets the buffer[9]
+ *
+ * @param[in] reg_addr : Register address from where the data to be read
+ * @param[out] reg_data : Pointer to data buffer to store the read data.
+ * @param[in] len : No of bytes of data to be read.
+ * @param[in] dev : Structure instance of bmp280_dev.
+ *
+ * @return Result of API execution
+ * @retval Zero for Success, non-zero otherwise.
+ */
 void reset_Buffer(void);
 
-//Checks chip ID for BNO055
-//If chip ID does not match it return 0;
-uint8_t BNO055_Chip_ID_Check(I2C_HandleTypeDef *huart);
+/*!
+ * @brief This API Check BNO055 ChipID register
+ *TODO: COMMENT COMMENT COMMENT!!!!! TODO TODO TODO
+ * @param[in] reg_addr : Register address from where the data to be read
+ * @param[out] reg_data : Pointer to data buffer to store the read data.
+ * @param[in] len : No of bytes of data to be read.
+ * @param[in] dev : Structure instance of bmp280_dev.
+ *
+ * @return Result of API execution
+ * @retval Zero for Success, non-zero otherwise.
+ */
+int8_t BNO055_Chip_ID_Check(I2C_HandleTypeDef *huart);
 
 //Initialize BNO055.
 //Return 1 if succesful else 0
-uint8_t BNO055_Init(I2C_HandleTypeDef *huart, bno055_opmode_t mode,uint8_t delay_time);
+int8_t BNO055_Init(I2C_HandleTypeDef *huart, bno055_opmode_t mode,uint8_t delay_time);
 
 //BNO055 Register Map Page Get and Set
 //Default page is 0. Other page is 1. So return 2 in fail.
 //Set returns 1 in success else 0.
-uint8_t BNO055_Get_Page(I2C_HandleTypeDef *huart);
-uint8_t BNO055_Set_Page(I2C_HandleTypeDef *huart,uint8_t page);
+int8_t BNO055_Get_Page(I2C_HandleTypeDef *huart,uint8_t *page_num_ptr);
+int8_t BNO055_Set_Page(I2C_HandleTypeDef *huart,uint8_t page);
 
 //Reading Raw Data from BNO055
-uint8_t BNO055_Read_Eul(I2C_HandleTypeDef *huart,float *eulerXYZ);
-uint8_t BNO055_Read_Qua(I2C_HandleTypeDef *huart,float *quaternionWXYZ);
-uint8_t BNO055_Read_Acc(I2C_HandleTypeDef *huart,float *accelXYZ);
-uint8_t BNO055_Read_Mag(I2C_HandleTypeDef *huart,float *magXYZ);
-uint8_t BNO055_Read_Gyr(I2C_HandleTypeDef *huart,float *gyrXYZ);
-uint8_t BNO055_Read_Grv(I2C_HandleTypeDef *huart,float *grvXYZ);
-uint8_t BNO055_Read_Lia(I2C_HandleTypeDef *huart,float *liaXYZ);
+int8_t BNO055_Read_Eul(I2C_HandleTypeDef *huart,float *eulerXYZ);
+int8_t BNO055_Read_Qua(I2C_HandleTypeDef *huart,float *quaternionWXYZ);
+int8_t BNO055_Read_Acc(I2C_HandleTypeDef *huart,float *accelXYZ);
+int8_t BNO055_Read_Mag(I2C_HandleTypeDef *huart,float *magXYZ);
+int8_t BNO055_Read_Gyr(I2C_HandleTypeDef *huart,float *gyrXYZ);
+int8_t BNO055_Read_Grv(I2C_HandleTypeDef *huart,float *grvXYZ);
+int8_t BNO055_Read_Lia(I2C_HandleTypeDef *huart,float *liaXYZ);
 
 //Sets parameters for measurements
-uint8_t BNO055_Set_Eul(I2C_HandleTypeDef *huart);
-uint8_t BNO055_Set_Qua(I2C_HandleTypeDef *huart);
-uint8_t BNO055_Set_Acc(I2C_HandleTypeDef *huart);
-uint8_t BNO055_Set_Mag(I2C_HandleTypeDef *huart);
-uint8_t BNO055_Set_Gyr(I2C_HandleTypeDef *huart);
-uint8_t BNO055_Set_Grv(I2C_HandleTypeDef *huart);
-uint8_t BNO055_Set_Lia(I2C_HandleTypeDef *huart);
+int8_t BNO055_Set_Eul(I2C_HandleTypeDef *huart);
+int8_t BNO055_Set_Qua(I2C_HandleTypeDef *huart);
+int8_t BNO055_Set_Acc(I2C_HandleTypeDef *huart);
+int8_t BNO055_Set_Mag(I2C_HandleTypeDef *huart);
+int8_t BNO055_Set_Gyr(I2C_HandleTypeDef *huart);
+int8_t BNO055_Set_Grv(I2C_HandleTypeDef *huart);
+int8_t BNO055_Set_Lia(I2C_HandleTypeDef *huart);
 
-uint8_t BNO055_SetMode(I2C_HandleTypeDef *huart,bno055_opmode_t mode);
-bno055_opmode_t BNO055_GetMode(I2C_HandleTypeDef *huart);
-uint8_t BNO055_SetAxisRemap(I2C_HandleTypeDef *huart,bno055_axis_remap_config_t remapcode);
-uint8_t BNO055_SetAxisSign(I2C_HandleTypeDef *huart,bno055_axis_remap_sign_t remapsign);
+int8_t BNO055_SetMode(I2C_HandleTypeDef *huart,bno055_opmode_t mode);
+int8_t BNO055_GetMode(I2C_HandleTypeDef *huart,bno055_opmode_t *mode);
+int8_t BNO055_SetAxisRemap(I2C_HandleTypeDef *huart,bno055_axis_remap_config_t remapcode);
+int8_t BNO055_SetAxisSign(I2C_HandleTypeDef *huart,bno055_axis_remap_sign_t remapsign);
 
-int8_t BNO055_GetTemp(I2C_HandleTypeDef *huart);
+int8_t BNO055_GetTemp(I2C_HandleTypeDef *huart,double *temp_ptr);
 
-/* #ifndef BNO055_H */
+/* #ifndef __BNO055_H__ */
 #endif

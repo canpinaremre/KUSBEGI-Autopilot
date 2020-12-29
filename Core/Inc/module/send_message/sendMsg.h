@@ -4,17 +4,18 @@
  * Language:  C
  */
 
-#ifndef SEND_MSG_H
-#define SEND_MSG_H
+#ifndef __SEND_MSG_H__
+#define __SEND_MSG_H__
 
 
 #include "stm32f4xx_hal.h"
 #include <string.h>
 #include "stdio.h"
+#include <lib/parameters/parameters.h>
 
 void sendInt(uint32_t myInt,UART_HandleTypeDef* huart,uint8_t newLine);
 void sendString(char* myString,UART_HandleTypeDef* huart,uint8_t newLine);
 void sendFloat(float myFloat,UART_HandleTypeDef* huart,uint8_t newLine);
 
-/* #ifndef SEND_MSG_H */
+/* #ifndef __SEND_MSG_H__ */
 #endif

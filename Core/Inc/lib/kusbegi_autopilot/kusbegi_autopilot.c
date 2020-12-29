@@ -5,10 +5,10 @@
  */
 #include "kusbegi_autopilot.h"
 
-uint8_t kusbegi_init(I2C_HandleTypeDef *huartI2C,KUSBEGI *kusbegi,UART_HandleTypeDef* huart){
-
+int8_t kusbegi_init(I2C_HandleTypeDef *huartI2C,KUSBEGI *kusbegi,UART_HandleTypeDef* huart){
+	int8_t rslt;
 	/* init output_mixer */
-	init_output_mixer(&output_mixer, huartI2C,huart);
+	rslt = init_output_mixer(&output_mixer, huartI2C,huart);
 
 	/* init kusbegi autopilot*/
 	kusbegi->mc_arm_state = DISARM;
@@ -29,7 +29,7 @@ uint8_t kusbegi_init(I2C_HandleTypeDef *huartI2C,KUSBEGI *kusbegi,UART_HandleTyp
 	last_tick_l5 = 0;
 	last_tick_l6 = 0;
 	kusbegi_tick = 0;
-	return 1;
+	return rslt;
 }
 
 void kusbegi_loop(UART_HandleTypeDef* huart,I2C_HandleTypeDef *huartI2C,KUSBEGI *kusbegi){
@@ -40,19 +40,20 @@ void kusbegi_loop(UART_HandleTypeDef* huart,I2C_HandleTypeDef *huartI2C,KUSBEGI 
 //		loop1(huart);
 //		last_tick_l1 = HAL_GetTick();
 //	}
-	if (kusbegi_tick - last_tick_l2 >= LOOP2DELAY_MS) {
-		loop2(huart,huartI2C);
-		last_tick_l2 = HAL_GetTick();
-	}
+//	if (kusbegi_tick - last_tick_l2 >= LOOP2DELAY_MS) {
+//		loop2(huart,huartI2C);
+//		last_tick_l2 = HAL_GetTick();
+//	}
 //	if (kusbegi_tick - last_tick_l3 >= LOOP3DELAY_MS) {
 //		loop3(huart);
 //		last_tick_l3 = HAL_GetTick();
 //	}
-//	if (kusbegi_tick - last_tick_l4 >= LOOP4DELAY_MS) {
-//		update_imu(&output_mixer, huartI2C);
-//		loop4(huart,kusbegi,&output_mixer);
-//		last_tick_l4 = HAL_GetTick();
-//	}
+	if (kusbegi_tick - last_tick_l4 >= LOOP4DELAY_MS) {
+
+		if(update_imu(&output_mixer, huartI2C) == BNO055_OK)
+			loop4(huart,kusbegi,&output_mixer);
+		last_tick_l4 = HAL_GetTick();
+	}
 //	if (kusbegi_tick - last_tick_l5 >= LOOP5DELAY_MS) {
 //		loop5();
 //		last_tick_l5 = HAL_GetTick();
@@ -61,7 +62,6 @@ void kusbegi_loop(UART_HandleTypeDef* huart,I2C_HandleTypeDef *huartI2C,KUSBEGI 
 //		loop6();
 //		last_tick_l6 = HAL_GetTick();
 //	}
-
 
 }
 

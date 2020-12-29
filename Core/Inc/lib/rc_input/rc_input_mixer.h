@@ -4,8 +4,8 @@
  * Language:  C
  */
 
-#ifndef RC_INPUT_MIXER_H
-#define RC_INPUT_MIXER_H
+#ifndef __RC_INPUT_MIXER_H__
+#define __RC_INPUT_MIXER_H__
 
 #define RC_INPUT_MIXER_CHANNEL_CNT 	9
 #define RC_INPUT_MIXER_CH_THROTTLE 	0
@@ -27,6 +27,7 @@
 										 // MODE3 PWM between RC_INPUT_MIXER_MODE2_TH and 2000
 
 #include <module/utility/utility_math.h>
+#include <lib/parameters/parameters.h>
 
 typedef enum{
 	throttle = 	RC_INPUT_MIXER_CH_THROTTLE,
@@ -62,8 +63,8 @@ typedef struct{
 #include "rc_input_sbus.h"
 SBUS sbus;
 
-uint8_t update_rc_input(UART_HandleTypeDef *huart,RC_INPUT *rc_input);
-void init_rc_input(RC_INPUT *rc_input);
+int8_t update_rc_input(UART_HandleTypeDef *huart,RC_INPUT *rc_input);
+int8_t init_rc_input(RC_INPUT *rc_input);
 
 
 
@@ -83,5 +84,5 @@ void init_rc_input(RC_INPUT *rc_input);
 
 
 
-/* #ifndef RC_INPUT_MIXER_H */
+/* #ifndef __RC_INPUT_MIXER_H__ */
 #endif

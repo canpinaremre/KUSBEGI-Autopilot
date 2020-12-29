@@ -1,4 +1,4 @@
-kusbegi_autopilot.c:8:9:kusbegi_init	32	static
+kusbegi_autopilot.c:8:8:kusbegi_init	32	static
 kusbegi_autopilot.c:35:6:kusbegi_loop	24	static
 kusbegi_autopilot.c:68:6:loop1	16	static
 kusbegi_autopilot.c:73:6:loop2	24	static

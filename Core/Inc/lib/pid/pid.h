@@ -30,7 +30,7 @@ SOFTWARE.
 
 #ifndef PID_CONTROLLER_H
 #define PID_CONTROLLER_H
-
+#include <lib/parameters/parameters.h>
 
 typedef struct {
 

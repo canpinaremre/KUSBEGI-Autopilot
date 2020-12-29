@@ -30,7 +30,8 @@ Core/Inc/drivers/BNO055/BNO055.o: ../Core/Inc/drivers/BNO055/BNO055.c \
  ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_tim.h \
  ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_tim_ex.h \
  ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_uart.h \
- ../Core/Inc/module/i2c/i2c_read_write.h
+ ../Core/Inc/module/i2c/i2c_read_write.h \
+ ../Core/Inc/lib/parameters/parameters.h
 
 ../Core/Inc/drivers/BNO055/BNO055.h:
 
@@ -95,3 +96,5 @@ Core/Inc/drivers/BNO055/BNO055.o: ../Core/Inc/drivers/BNO055/BNO055.c \
 ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_uart.h:
 
 ../Core/Inc/module/i2c/i2c_read_write.h:
+
+../Core/Inc/lib/parameters/parameters.h:

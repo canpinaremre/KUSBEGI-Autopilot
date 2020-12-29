@@ -15,6 +15,7 @@ uint8_t RC_READ_SBUS(UART_HandleTypeDef *huart,SBUS *sbus) {
 		sbus->error_cnt++;
 		if (sbus->error_cnt > SBUS_ERROR_CNT) {
 			sbus->error = 1;
+
 		}
 		return 0;
 	}

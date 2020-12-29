@@ -19,80 +19,165 @@ void reset_Buffer(void){
 	buffer[8] = 0;
 }
 
-uint8_t BNO055_Chip_ID_Check(I2C_HandleTypeDef *huart) {
+int8_t BNO055_Chip_ID_Check(I2C_HandleTypeDef *huart) {
+	uint8_t chip_id;
+	int8_t rslt;
 	reset_Buffer();
-
-	if (read8(huart,BNO055_READ_ADDR,BNO055_CHIP_ID_ADDR) == BNO055_ID) {
-		return 1;
-	} else {
-		return 0;
-	}
+	rslt = read8(huart, BNO055_READ_ADDR, BNO055_CHIP_ID_ADDR, &chip_id);
+	if (rslt == HAL_OK) {
+		if (chip_id == BNO055_ID) {
+			return BNO055_OK;
+		} else
+			return BNO055_E_DEV_NOT_FOUND;
+	} else
+		return rslt;
 
 }
 
-uint8_t BNO055_Init(I2C_HandleTypeDef *huart, bno055_opmode_t mode,uint8_t delay_time) {
-	if (!BNO055_Chip_ID_Check(huart)) {
-		return 0;
+int8_t BNO055_Init(I2C_HandleTypeDef *huart, bno055_opmode_t mode,uint8_t delay_time) {
+	int8_t rslt;
+	rslt = BNO055_Chip_ID_Check(huart);
+	if (rslt != BNO055_OK) {
+		return rslt;
 	}
 
-	BNO055_SetMode(huart, mode);
+	//TODO: Add counter to count try. and try 5 times
+	rslt = BNO055_SetMode(huart, mode);
 	HAL_Delay(delay_time);
-	return 1;
+	return rslt;
 }
 
-uint8_t BNO055_Get_Page(I2C_HandleTypeDef *huart) {
-	if (!BNO055_Chip_ID_Check(huart)) {
-		return 2;
+int8_t BNO055_Get_Page(I2C_HandleTypeDef *huart,uint8_t *page_num_ptr) {
+	int8_t rslt;
+	uint8_t page_num;
+	rslt = BNO055_Chip_ID_Check(huart);
+	if (rslt != BNO055_OK) {
+		return rslt;
 	}
 
-	return read8(huart,BNO055_READ_ADDR,BNO055_PAGE_ADDR);
+	rslt = read8(huart,BNO055_READ_ADDR,BNO055_PAGE_ADDR,&page_num);
+
+	if(rslt == HAL_OK){
+		*page_num_ptr = page_num;
+		return BNO055_OK;
+	}
+
+	return rslt;
 }
 
-uint8_t BNO055_Set_Page(I2C_HandleTypeDef *huart,uint8_t page) {
-	if (!BNO055_Chip_ID_Check(huart)) {
-		return 0;
+int8_t BNO055_Set_Page(I2C_HandleTypeDef *huart,uint8_t page) {
+	int8_t rslt;
+	rslt = BNO055_Chip_ID_Check(huart);
+	if (rslt != BNO055_OK) {
+		return rslt;
 	}
-	write8(huart,BNO055_READ_ADDR,BNO055_PAGE_ADDR,page);
-	return 1;
+
+	rslt = write8(huart,BNO055_READ_ADDR,BNO055_PAGE_ADDR,page);
+	if(rslt == HAL_OK){
+		return BNO055_OK;
+	}
+	return rslt;
 }
 
 //Reading Raw Data from BNO055
-uint8_t BNO055_Read_Eul(I2C_HandleTypeDef *huart,float *eulerXYZ) {
-	if (!BNO055_Chip_ID_Check(huart)) {
-		return 0;
+int8_t BNO055_Read_Eul(I2C_HandleTypeDef *huart,float *eulerXYZ) {
+	int8_t rslt;
+	uint8_t temp;
+	rslt = BNO055_Chip_ID_Check(huart);
+	if (rslt != BNO055_OK) {
+		return rslt;
 	}
 
-	buffer[1] = read8(huart,BNO055_READ_ADDR,BNO055_EUL_DATA_x_LSB_ADDR);
-	buffer[2] = read8(huart,BNO055_READ_ADDR,BNO055_EUL_DATA_x_MSB_ADDR);
-	buffer[3] = read8(huart,BNO055_READ_ADDR,BNO055_EUL_DATA_y_LSB_ADDR);
-	buffer[4] = read8(huart,BNO055_READ_ADDR,BNO055_EUL_DATA_y_MSB_ADDR);
-	buffer[5] = read8(huart,BNO055_READ_ADDR,BNO055_EUL_DATA_z_LSB_ADDR);
-	buffer[6] = read8(huart,BNO055_READ_ADDR,BNO055_EUL_DATA_z_MSB_ADDR);
+	rslt = read8(huart, BNO055_READ_ADDR, BNO055_EUL_DATA_x_LSB_ADDR, &temp);
+	if (rslt != HAL_OK)
+		return rslt;
+	buffer[1] = temp;
+
+	rslt = read8(huart, BNO055_READ_ADDR, BNO055_EUL_DATA_x_MSB_ADDR, &temp);
+	if (rslt != HAL_OK)
+		return rslt;
+	buffer[2] = temp;
+
+	rslt = read8(huart, BNO055_READ_ADDR, BNO055_EUL_DATA_y_LSB_ADDR, &temp);
+	if (rslt != HAL_OK)
+		return rslt;
+	buffer[3] = temp;
+
+	rslt = read8(huart, BNO055_READ_ADDR, BNO055_EUL_DATA_y_MSB_ADDR, &temp);
+	if (rslt != HAL_OK)
+		return rslt;
+	buffer[4] = temp;
+
+	rslt = read8(huart, BNO055_READ_ADDR, BNO055_EUL_DATA_z_LSB_ADDR, &temp);
+	if (rslt != HAL_OK)
+		return rslt;
+	buffer[5] = temp;
+
+	rslt = read8(huart, BNO055_READ_ADDR, BNO055_EUL_DATA_z_MSB_ADDR, &temp);
+	if (rslt != HAL_OK)
+		return rslt;
+	buffer[6] = temp;
 
 	data_read[0] = (buffer[1]) | ((buffer[2]) << 8);
 	data_read[1] = (buffer[3]) | ((buffer[4]) << 8);
 	data_read[2] = (buffer[5]) | ((buffer[6]) << 8);
+
 	eulerXYZ[0] = ((float) data_read[0]) / 16.0;
 	eulerXYZ[1] = (float) data_read[1] / 16.0;
 	eulerXYZ[2] = (float) data_read[2] / 16.0;
 
-	return 1;
+	return BNO055_OK;
 }
 
-uint8_t BNO055_Read_Qua(I2C_HandleTypeDef *huart,float *quaternionWXYZ) {
-	if (!BNO055_Chip_ID_Check(huart)) {
-		return 0;
+int8_t BNO055_Read_Qua(I2C_HandleTypeDef *huart,float *quaternionWXYZ) {
+	int8_t rslt;
+	uint8_t temp;
+	rslt = BNO055_Chip_ID_Check(huart);
+	if (rslt != BNO055_OK) {
+		return rslt;
 	}
-	//TODO: Check NDOF OR Other modes if they supports Quaternion
 
-	buffer[1] = read8(huart,BNO055_READ_ADDR,BNO055_QUATERNION_DATA_W_LSB_ADDR);
-	buffer[2] = read8(huart,BNO055_READ_ADDR,BNO055_QUATERNION_DATA_W_MSB_ADDR);
-	buffer[3] = read8(huart,BNO055_READ_ADDR,BNO055_QUATERNION_DATA_X_LSB_ADDR);
-	buffer[4] = read8(huart,BNO055_READ_ADDR,BNO055_QUATERNION_DATA_X_MSB_ADDR);
-	buffer[5] = read8(huart,BNO055_READ_ADDR,BNO055_QUATERNION_DATA_Y_LSB_ADDR);
-	buffer[6] = read8(huart,BNO055_READ_ADDR,BNO055_QUATERNION_DATA_Y_MSB_ADDR);
-	buffer[7] = read8(huart,BNO055_READ_ADDR,BNO055_QUATERNION_DATA_Z_LSB_ADDR);
-	buffer[8] = read8(huart,BNO055_READ_ADDR,BNO055_QUATERNION_DATA_Z_MSB_ADDR);
+	rslt = read8(huart, BNO055_READ_ADDR, BNO055_QUATERNION_DATA_W_LSB_ADDR, &temp);
+	if (rslt != HAL_OK)
+		return rslt;
+	buffer[1] = temp;
+
+	rslt = read8(huart, BNO055_READ_ADDR, BNO055_QUATERNION_DATA_W_MSB_ADDR, &temp);
+	if (rslt != HAL_OK)
+		return rslt;
+	buffer[2] = temp;
+
+	rslt = read8(huart, BNO055_READ_ADDR, BNO055_QUATERNION_DATA_X_LSB_ADDR, &temp);
+	if (rslt != HAL_OK)
+		return rslt;
+	buffer[3] = temp;
+
+	rslt = read8(huart, BNO055_READ_ADDR, BNO055_QUATERNION_DATA_X_MSB_ADDR, &temp);
+	if (rslt != HAL_OK)
+		return rslt;
+	buffer[4] = temp;
+
+	rslt = read8(huart, BNO055_READ_ADDR, BNO055_QUATERNION_DATA_Y_LSB_ADDR, &temp);
+	if (rslt != HAL_OK)
+		return rslt;
+	buffer[5] = temp;
+
+	rslt = read8(huart, BNO055_READ_ADDR, BNO055_QUATERNION_DATA_Y_MSB_ADDR, &temp);
+	if (rslt != HAL_OK)
+		return rslt;
+	buffer[6] = temp;
+
+	rslt = read8(huart, BNO055_READ_ADDR, BNO055_QUATERNION_DATA_Z_LSB_ADDR, &temp);
+	if (rslt != HAL_OK)
+		return rslt;
+	buffer[7] = temp;
+
+	rslt = read8(huart, BNO055_READ_ADDR, BNO055_QUATERNION_DATA_Z_MSB_ADDR, &temp);
+	if (rslt != HAL_OK)
+		return rslt;
+	buffer[8] = temp;
+
+	//TODO: Check NDOF OR Other modes if they supports Quaternion
 
 	data_read[0] = (buffer[1]) | ((buffer[2]) << 8);
 	data_read[1] = (buffer[3]) | ((buffer[4]) << 8);
@@ -104,22 +189,48 @@ uint8_t BNO055_Read_Qua(I2C_HandleTypeDef *huart,float *quaternionWXYZ) {
 	quaternionWXYZ[2] = (float) data_read[2] / 16383.0;
 	quaternionWXYZ[3] = (float) data_read[3] / 16383.0;
 
-	return 1;
+	return BNO055_OK;
 }
 
-uint8_t BNO055_Read_Acc(I2C_HandleTypeDef *huart,float *accelXYZ) {
-	if (!BNO055_Chip_ID_Check(huart)) {
-		return 0;
+int8_t BNO055_Read_Acc(I2C_HandleTypeDef *huart,float *accelXYZ) {
+	int8_t rslt;
+	uint8_t temp;
+	rslt = BNO055_Chip_ID_Check(huart);
+	if (rslt != BNO055_OK) {
+		return rslt;
 	}
+
+	rslt = read8(huart, BNO055_READ_ADDR, BNO055_ACCEL_DATA_X_LSB_ADDR, &temp);
+	if (rslt != HAL_OK)
+		return rslt;
+	buffer[1] = temp;
+
+	rslt = read8(huart, BNO055_READ_ADDR, BNO055_ACCEL_DATA_X_MSB_ADDR, &temp);
+	if (rslt != HAL_OK)
+		return rslt;
+	buffer[2] = temp;
+
+	rslt = read8(huart, BNO055_READ_ADDR, BNO055_ACCEL_DATA_Y_LSB_ADDR, &temp);
+	if (rslt != HAL_OK)
+		return rslt;
+	buffer[3] = temp;
+
+	rslt = read8(huart, BNO055_READ_ADDR, BNO055_ACCEL_DATA_Y_MSB_ADDR, &temp);
+	if (rslt != HAL_OK)
+		return rslt;
+	buffer[4] = temp;
+
+	rslt = read8(huart, BNO055_READ_ADDR, BNO055_ACCEL_DATA_Z_LSB_ADDR, &temp);
+	if (rslt != HAL_OK)
+		return rslt;
+	buffer[5] = temp;
+
+	rslt = read8(huart, BNO055_READ_ADDR, BNO055_ACCEL_DATA_Z_MSB_ADDR, &temp);
+	if (rslt != HAL_OK)
+		return rslt;
+	buffer[6] = temp;
+
 	//TODO: Sometimes goes 0 0 0 and errors when reading chip ID
-
-
-	buffer[1] = read8(huart,BNO055_READ_ADDR,BNO055_ACCEL_DATA_X_LSB_ADDR);
-	buffer[2] = read8(huart,BNO055_READ_ADDR,BNO055_ACCEL_DATA_X_MSB_ADDR);
-	buffer[3] = read8(huart,BNO055_READ_ADDR,BNO055_ACCEL_DATA_Y_LSB_ADDR);
-	buffer[4] = read8(huart,BNO055_READ_ADDR,BNO055_ACCEL_DATA_Y_MSB_ADDR);
-	buffer[5] = read8(huart,BNO055_READ_ADDR,BNO055_ACCEL_DATA_Z_LSB_ADDR);
-	buffer[6] = read8(huart,BNO055_READ_ADDR,BNO055_ACCEL_DATA_Z_MSB_ADDR);
 
 	data_read[0] = (buffer[1]) | ((buffer[2]) << 8);
 	data_read[1] = (buffer[3]) | ((buffer[4]) << 8);
@@ -128,22 +239,45 @@ uint8_t BNO055_Read_Acc(I2C_HandleTypeDef *huart,float *accelXYZ) {
 	accelXYZ[1] = (float) data_read[1] / 100.0;
 	accelXYZ[2] = (float) data_read[2] / 100.0;
 
-
-
-	return 1;
+	return BNO055_OK;
 }
-uint8_t BNO055_Read_Mag(I2C_HandleTypeDef *huart,float *magXYZ) {
-	if (!BNO055_Chip_ID_Check(huart)) {
-		return 0;
+int8_t BNO055_Read_Mag(I2C_HandleTypeDef *huart,float *magXYZ) {
+	int8_t rslt;
+	uint8_t temp;
+	rslt = BNO055_Chip_ID_Check(huart);
+	if (rslt != BNO055_OK) {
+		return rslt;
 	}
 
+	rslt = read8(huart, BNO055_READ_ADDR, BNO055_MAG_DATA_X_LSB_ADDR, &temp);
+	if (rslt != HAL_OK)
+		return rslt;
+	buffer[1] = temp;
 
-	buffer[1] = read8(huart,BNO055_READ_ADDR,BNO055_MAG_DATA_X_LSB_ADDR);
-	buffer[2] = read8(huart,BNO055_READ_ADDR,BNO055_MAG_DATA_X_MSB_ADDR);
-	buffer[3] = read8(huart,BNO055_READ_ADDR,BNO055_MAG_DATA_Y_LSB_ADDR);
-	buffer[4] = read8(huart,BNO055_READ_ADDR,BNO055_MAG_DATA_Y_MSB_ADDR);
-	buffer[5] = read8(huart,BNO055_READ_ADDR,BNO055_MAG_DATA_Z_LSB_ADDR);
-	buffer[6] = read8(huart,BNO055_READ_ADDR,BNO055_MAG_DATA_Z_MSB_ADDR);
+	rslt = read8(huart, BNO055_READ_ADDR, BNO055_MAG_DATA_X_MSB_ADDR, &temp);
+	if (rslt != HAL_OK)
+		return rslt;
+	buffer[2] = temp;
+
+	rslt = read8(huart, BNO055_READ_ADDR, BNO055_MAG_DATA_Y_LSB_ADDR, &temp);
+	if (rslt != HAL_OK)
+		return rslt;
+	buffer[3] = temp;
+
+	rslt = read8(huart, BNO055_READ_ADDR, BNO055_MAG_DATA_Y_MSB_ADDR, &temp);
+	if (rslt != HAL_OK)
+		return rslt;
+	buffer[4] = temp;
+
+	rslt = read8(huart, BNO055_READ_ADDR, BNO055_MAG_DATA_Z_LSB_ADDR, &temp);
+	if (rslt != HAL_OK)
+		return rslt;
+	buffer[5] = temp;
+
+	rslt = read8(huart, BNO055_READ_ADDR, BNO055_MAG_DATA_Z_MSB_ADDR, &temp);
+	if (rslt != HAL_OK)
+		return rslt;
+	buffer[6] = temp;
 
 	data_read[0] = (buffer[1]) | ((buffer[2]) << 8);
 	data_read[1] = (buffer[3]) | ((buffer[4]) << 8);
@@ -152,19 +286,45 @@ uint8_t BNO055_Read_Mag(I2C_HandleTypeDef *huart,float *magXYZ) {
 	magXYZ[1] = (float) data_read[1] / 100.0;
 	magXYZ[2] = (float) data_read[2] / 100.0;
 
-	return 1;
+	return BNO055_OK;
 }
-uint8_t BNO055_Read_Gyr(I2C_HandleTypeDef *huart,float *gyrXYZ) {
-	if (!BNO055_Chip_ID_Check(huart)) {
-		return 0;
+int8_t BNO055_Read_Gyr(I2C_HandleTypeDef *huart,float *gyrXYZ) {
+	int8_t rslt;
+	uint8_t temp;
+	rslt = BNO055_Chip_ID_Check(huart);
+	if (rslt != BNO055_OK) {
+		return rslt;
 	}
 
-	buffer[1] = read8(huart,BNO055_READ_ADDR,BNO055_GYRO_DATA_X_LSB_ADDR);
-	buffer[2] = read8(huart,BNO055_READ_ADDR,BNO055_GYRO_DATA_X_MSB_ADDR);
-	buffer[3] = read8(huart,BNO055_READ_ADDR,BNO055_GYRO_DATA_Y_LSB_ADDR);
-	buffer[4] = read8(huart,BNO055_READ_ADDR,BNO055_GYRO_DATA_Y_MSB_ADDR);
-	buffer[5] = read8(huart,BNO055_READ_ADDR,BNO055_GYRO_DATA_Z_LSB_ADDR);
-	buffer[6] = read8(huart,BNO055_READ_ADDR,BNO055_GYRO_DATA_Z_MSB_ADDR);
+	rslt = read8(huart, BNO055_READ_ADDR, BNO055_GYRO_DATA_X_LSB_ADDR, &temp);
+	if (rslt != HAL_OK)
+		return rslt;
+	buffer[1] = temp;
+
+	rslt = read8(huart, BNO055_READ_ADDR, BNO055_GYRO_DATA_X_MSB_ADDR, &temp);
+	if (rslt != HAL_OK)
+		return rslt;
+	buffer[2] = temp;
+
+	rslt = read8(huart, BNO055_READ_ADDR, BNO055_GYRO_DATA_Y_LSB_ADDR, &temp);
+	if (rslt != HAL_OK)
+		return rslt;
+	buffer[3] = temp;
+
+	rslt = read8(huart, BNO055_READ_ADDR, BNO055_GYRO_DATA_Y_MSB_ADDR, &temp);
+	if (rslt != HAL_OK)
+		return rslt;
+	buffer[4] = temp;
+
+	rslt = read8(huart, BNO055_READ_ADDR, BNO055_GYRO_DATA_Z_LSB_ADDR, &temp);
+	if (rslt != HAL_OK)
+		return rslt;
+	buffer[5] = temp;
+
+	rslt = read8(huart, BNO055_READ_ADDR, BNO055_GYRO_DATA_Z_MSB_ADDR, &temp);
+	if (rslt != HAL_OK)
+		return rslt;
+	buffer[6] = temp;
 
 	data_read[0] = (buffer[1]) | ((buffer[2]) << 8);
 	data_read[1] = (buffer[3]) | ((buffer[4]) << 8);
@@ -173,19 +333,45 @@ uint8_t BNO055_Read_Gyr(I2C_HandleTypeDef *huart,float *gyrXYZ) {
 	gyrXYZ[1] = (float) data_read[1] / 100.0;
 	gyrXYZ[2] = (float) data_read[2] / 100.0;
 
-	return 1;
+	return BNO055_OK;
 }
-uint8_t BNO055_Read_Grv(I2C_HandleTypeDef *huart,float *grvXYZ) {
-	if (!BNO055_Chip_ID_Check(huart)) {
-		return 0;
+int8_t BNO055_Read_Grv(I2C_HandleTypeDef *huart,float *grvXYZ) {
+	int8_t rslt;
+	uint8_t temp;
+	rslt = BNO055_Chip_ID_Check(huart);
+	if (rslt != BNO055_OK) {
+		return rslt;
 	}
 
-	buffer[1] = read8(huart,BNO055_READ_ADDR,BNO055_GRAVITY_DATA_X_LSB_ADDR);
-	buffer[2] = read8(huart,BNO055_READ_ADDR,BNO055_GRAVITY_DATA_X_MSB_ADDR);
-	buffer[3] = read8(huart,BNO055_READ_ADDR,BNO055_GRAVITY_DATA_Y_LSB_ADDR);
-	buffer[4] = read8(huart,BNO055_READ_ADDR,BNO055_GRAVITY_DATA_Y_MSB_ADDR);
-	buffer[5] = read8(huart,BNO055_READ_ADDR,BNO055_GRAVITY_DATA_Z_LSB_ADDR);
-	buffer[6] = read8(huart,BNO055_READ_ADDR,BNO055_GRAVITY_DATA_Z_MSB_ADDR);
+	rslt = read8(huart, BNO055_READ_ADDR, BNO055_GRAVITY_DATA_X_LSB_ADDR, &temp);
+	if (rslt != HAL_OK)
+		return rslt;
+	buffer[1] = temp;
+
+	rslt = read8(huart, BNO055_READ_ADDR, BNO055_GRAVITY_DATA_X_MSB_ADDR, &temp);
+	if (rslt != HAL_OK)
+		return rslt;
+	buffer[2] = temp;
+
+	rslt = read8(huart, BNO055_READ_ADDR, BNO055_GRAVITY_DATA_Y_LSB_ADDR, &temp);
+	if (rslt != HAL_OK)
+		return rslt;
+	buffer[3] = temp;
+
+	rslt = read8(huart, BNO055_READ_ADDR, BNO055_GRAVITY_DATA_Y_MSB_ADDR, &temp);
+	if (rslt != HAL_OK)
+		return rslt;
+	buffer[4] = temp;
+
+	rslt = read8(huart, BNO055_READ_ADDR, BNO055_GRAVITY_DATA_Z_LSB_ADDR, &temp);
+	if (rslt != HAL_OK)
+		return rslt;
+	buffer[5] = temp;
+
+	rslt = read8(huart, BNO055_READ_ADDR, BNO055_GRAVITY_DATA_Z_MSB_ADDR, &temp);
+	if (rslt != HAL_OK)
+		return rslt;
+	buffer[6] = temp;
 
 	data_read[0] = (buffer[1]) | ((buffer[2]) << 8);
 	data_read[1] = (buffer[3]) | ((buffer[4]) << 8);
@@ -194,19 +380,45 @@ uint8_t BNO055_Read_Grv(I2C_HandleTypeDef *huart,float *grvXYZ) {
 	grvXYZ[1] = (float) data_read[1] / 100.0;
 	grvXYZ[2] = (float) data_read[2] / 100.0;
 
-	return 1;
+	return BNO055_OK;
 }
-uint8_t BNO055_Read_Lia(I2C_HandleTypeDef *huart,float *liaXYZ) {
-	if (!BNO055_Chip_ID_Check(huart)) {
-		return 0;
+int8_t BNO055_Read_Lia(I2C_HandleTypeDef *huart,float *liaXYZ) {
+	int8_t rslt;
+	uint8_t temp;
+	rslt = BNO055_Chip_ID_Check(huart);
+	if (rslt != BNO055_OK) {
+		return rslt;
 	}
 
-	buffer[1] = read8(huart,BNO055_READ_ADDR,BNO055_LINEAR_ACCEL_DATA_X_LSB_ADDR);
-	buffer[2] = read8(huart,BNO055_READ_ADDR,BNO055_LINEAR_ACCEL_DATA_X_MSB_ADDR);
-	buffer[3] = read8(huart,BNO055_READ_ADDR,BNO055_LINEAR_ACCEL_DATA_Y_LSB_ADDR);
-	buffer[4] = read8(huart,BNO055_READ_ADDR,BNO055_LINEAR_ACCEL_DATA_Y_MSB_ADDR);
-	buffer[5] = read8(huart,BNO055_READ_ADDR,BNO055_LINEAR_ACCEL_DATA_Z_LSB_ADDR);
-	buffer[6] = read8(huart,BNO055_READ_ADDR,BNO055_LINEAR_ACCEL_DATA_Z_MSB_ADDR);
+	rslt = read8(huart, BNO055_READ_ADDR, BNO055_LINEAR_ACCEL_DATA_X_LSB_ADDR, &temp);
+	if (rslt != HAL_OK)
+		return rslt;
+	buffer[1] = temp;
+
+	rslt = read8(huart, BNO055_READ_ADDR, BNO055_LINEAR_ACCEL_DATA_X_MSB_ADDR, &temp);
+	if (rslt != HAL_OK)
+		return rslt;
+	buffer[2] = temp;
+
+	rslt = read8(huart, BNO055_READ_ADDR, BNO055_LINEAR_ACCEL_DATA_Y_LSB_ADDR, &temp);
+	if (rslt != HAL_OK)
+		return rslt;
+	buffer[3] = temp;
+
+	rslt = read8(huart, BNO055_READ_ADDR, BNO055_LINEAR_ACCEL_DATA_Y_MSB_ADDR, &temp);
+	if (rslt != HAL_OK)
+		return rslt;
+	buffer[4] = temp;
+
+	rslt = read8(huart, BNO055_READ_ADDR, BNO055_LINEAR_ACCEL_DATA_Z_LSB_ADDR, &temp);
+	if (rslt != HAL_OK)
+		return rslt;
+	buffer[5] = temp;
+
+	rslt = read8(huart, BNO055_READ_ADDR, BNO055_LINEAR_ACCEL_DATA_Z_MSB_ADDR, &temp);
+	if (rslt != HAL_OK)
+		return rslt;
+	buffer[6] = temp;
 
 	data_read[0] = (buffer[1]) | ((buffer[2]) << 8);
 	data_read[1] = (buffer[3]) | ((buffer[4]) << 8);
@@ -215,112 +427,207 @@ uint8_t BNO055_Read_Lia(I2C_HandleTypeDef *huart,float *liaXYZ) {
 	liaXYZ[1] = (float) data_read[1] / 100.0;
 	liaXYZ[2] = (float) data_read[2] / 100.0;
 
-	return 1;
+	return BNO055_OK;
 }
 
 //Sets parameters for measurements
-uint8_t BNO055_Set_Eul(I2C_HandleTypeDef *huart) {
-	if (!BNO055_Chip_ID_Check(huart)) {
-		return 0;
-	}//TODO
-	return 1;
-}
-
-uint8_t BNO055_Set_Qua(I2C_HandleTypeDef *huart) {
-	if (!BNO055_Chip_ID_Check(huart)) {
-		return 0;
-	}//TODO
-	return 1;
-}
-
-uint8_t BNO055_Set_Acc(I2C_HandleTypeDef *huart) {
-	if (!BNO055_Chip_ID_Check(huart)) {
-		return 0;
-	}//TODO
-	return 1;
-}
-
-uint8_t BNO055_Set_Mag(I2C_HandleTypeDef *huart) {
-	if (!BNO055_Chip_ID_Check(huart)) {
-		return 0;
-	}//TODO
-	return 1;
-}
-
-uint8_t BNO055_Set_Gyr(I2C_HandleTypeDef *huart) {
-	if (!BNO055_Chip_ID_Check(huart)) {
-		return 0;
-	}//TODO
-	return 1;
-}
-
-uint8_t BNO055_Set_Grv(I2C_HandleTypeDef *huart) {
-	if (!BNO055_Chip_ID_Check(huart)) {
-		return 0;
-	}//TODO
-	return 1;
-}
-
-uint8_t BNO055_Set_Lia(I2C_HandleTypeDef *huart) {
-	if (!BNO055_Chip_ID_Check(huart)) {
-		return 0;
-	}//TODO
-	return 1;
-}
-
-uint8_t BNO055_SetMode(I2C_HandleTypeDef *huart,bno055_opmode_t mode){
-	if (!BNO055_Chip_ID_Check(huart)) {
-		return 0;
+int8_t BNO055_Set_Eul(I2C_HandleTypeDef *huart) {
+	int8_t rslt;
+	rslt = BNO055_Chip_ID_Check(huart);
+	if (rslt != BNO055_OK) {
+		return rslt;
 	}
 
-	write8(huart, BNO055_WRITE_ADDR, BNO055_OPR_MODE_ADDR, mode);
+	return BNO055_E_EMPTY_FUNCTION;
+}
+
+int8_t BNO055_Set_Qua(I2C_HandleTypeDef *huart) {
+	int8_t rslt;
+	rslt = BNO055_Chip_ID_Check(huart);
+	if (rslt != BNO055_OK) {
+		return rslt;
+	}
+
+	return BNO055_E_EMPTY_FUNCTION;
+}
+
+int8_t BNO055_Set_Acc(I2C_HandleTypeDef *huart) {
+	int8_t rslt;
+	rslt = BNO055_Chip_ID_Check(huart);
+	if (rslt != BNO055_OK) {
+		return rslt;
+	}
+
+	return BNO055_E_EMPTY_FUNCTION;
+}
+
+int8_t BNO055_Set_Mag(I2C_HandleTypeDef *huart) {
+	int8_t rslt;
+	rslt = BNO055_Chip_ID_Check(huart);
+	if (rslt != BNO055_OK) {
+		return rslt;
+	}
+
+	return BNO055_E_EMPTY_FUNCTION;
+}
+
+int8_t BNO055_Set_Gyr(I2C_HandleTypeDef *huart) {
+	int8_t rslt;
+	rslt = BNO055_Chip_ID_Check(huart);
+	if (rslt != BNO055_OK) {
+		return rslt;
+	}
+
+	return BNO055_E_EMPTY_FUNCTION;
+}
+
+int8_t BNO055_Set_Grv(I2C_HandleTypeDef *huart) {
+	int8_t rslt;
+	rslt = BNO055_Chip_ID_Check(huart);
+	if (rslt != BNO055_OK) {
+		return rslt;
+	}
+
+	return BNO055_E_EMPTY_FUNCTION;
+}
+
+int8_t BNO055_Set_Lia(I2C_HandleTypeDef *huart) {
+	int8_t rslt;
+	rslt = BNO055_Chip_ID_Check(huart);
+	if (rslt != BNO055_OK) {
+		return rslt;
+	}
+
+	return BNO055_E_EMPTY_FUNCTION;
+}
+
+int8_t BNO055_SetMode(I2C_HandleTypeDef *huart,bno055_opmode_t mode){
+	int8_t rslt;
+	rslt = BNO055_Chip_ID_Check(huart);
+	if (rslt != BNO055_OK) {
+		return rslt;
+	}
+
+	rslt = write8(huart, BNO055_WRITE_ADDR, BNO055_OPR_MODE_ADDR, mode);
 	HAL_Delay(20);
-
-	return 1;
+	if(rslt == HAL_OK)
+		return BNO055_OK;
+	else
+		return BNO055_E_SET_MODE_FAIL;
 }
 
-bno055_opmode_t BNO055_GetMode(I2C_HandleTypeDef *huart){
-	return read8(huart,BNO055_READ_ADDR,BNO055_OPR_MODE_ADDR);
-}
-
-uint8_t BNO055_SetAxisRemap(I2C_HandleTypeDef *huart,bno055_axis_remap_config_t remapcode){
-	if (!BNO055_Chip_ID_Check(huart)) {
-		return 0;
+int8_t BNO055_GetMode(I2C_HandleTypeDef *huart, bno055_opmode_t *mode) {
+	int8_t rslt;
+	bno055_opmode_t temp;
+	rslt = BNO055_Chip_ID_Check(huart);
+	if (rslt != BNO055_OK) {
+		return rslt;
 	}
 
-	bno055_opmode_t modeback = BNO055_GetMode(huart);
-	BNO055_SetMode(huart,OPERATION_MODE_CONFIG);
+	rslt = read8(huart, BNO055_READ_ADDR, BNO055_OPR_MODE_ADDR, &temp);
+	if (rslt == HAL_OK) {
+		*mode = temp;
+		if ((temp < OPERATION_MODE_CONFIG) || (temp > OPERATION_MODE_NDOF)) {
+			return BNO055_E_GET_MODE_OFF_RANGE;
+		}
+		return BNO055_OK;
+	} else
+		return rslt;
+}
+
+int8_t BNO055_SetAxisRemap(I2C_HandleTypeDef *huart,
+		bno055_axis_remap_config_t remapcode) {
+	int8_t rslt;
+	bno055_opmode_t modeback;
+	rslt = BNO055_Chip_ID_Check(huart);
+	if (rslt != BNO055_OK) {
+		return rslt;
+	}
+
+	rslt = BNO055_GetMode(huart, &modeback);
+	if (rslt != BNO055_OK) {
+		return rslt;
+	}
+
+	rslt = BNO055_SetMode(huart, OPERATION_MODE_CONFIG);
+	if (rslt != BNO055_OK) {
+		return rslt;
+	}
+
 	HAL_Delay(25);
-	write8(huart,BNO055_WRITE_ADDR,BNO055_AXIS_MAP_CONFIG_ADDR,remapcode);
+
+	rslt = write8(huart, BNO055_WRITE_ADDR, BNO055_AXIS_MAP_CONFIG_ADDR,
+			remapcode);
+	if (rslt != HAL_OK) {
+		return rslt;
+	}
+
 	HAL_Delay(15);
-	BNO055_SetMode(huart, modeback);
+
+	rslt = BNO055_SetMode(huart, modeback);
+	if (rslt != BNO055_OK) {
+		return rslt;
+	}
+
 	HAL_Delay(20);
 
-	return 1;
+	return BNO055_OK;
 }
 
-uint8_t BNO055_SetAxisSign(I2C_HandleTypeDef *huart,bno055_axis_remap_sign_t remapsign){
-	if (!BNO055_Chip_ID_Check(huart)) {
-			return 0;
-		}
-		return 1;
+int8_t BNO055_SetAxisSign(I2C_HandleTypeDef *huart,
+		bno055_axis_remap_sign_t remapsign) {
+	int8_t rslt;
+	bno055_opmode_t modeback;
+	rslt = BNO055_Chip_ID_Check(huart);
+	if (rslt != BNO055_OK) {
+		return rslt;
+	}
 
-	bno055_opmode_t modeback = BNO055_GetMode(huart);
+	rslt = BNO055_GetMode(huart, &modeback);
+	if (rslt != BNO055_OK) {
+		return rslt;
+	}
 
-	BNO055_SetMode(huart,OPERATION_MODE_CONFIG);
+	rslt = BNO055_SetMode(huart, OPERATION_MODE_CONFIG);
+	if (rslt != BNO055_OK) {
+		return rslt;
+	}
+
 	HAL_Delay(25);
-	write8(huart,BNO055_WRITE_ADDR,BNO055_AXIS_MAP_SIGN_ADDR, remapsign);
+
+	rslt = write8(huart, BNO055_WRITE_ADDR, BNO055_AXIS_MAP_SIGN_ADDR,
+			remapsign);
+	if (rslt != HAL_OK) {
+		return rslt;
+	}
+
 	HAL_Delay(10);
-	/* Set the requested operating mode (see section 3.3) */
-	BNO055_SetMode(huart,modeback);
+
+	rslt = BNO055_SetMode(huart, modeback);
+	if (rslt != BNO055_OK) {
+		return rslt;
+	}
+
 	HAL_Delay(20);
+	return BNO055_OK;
 }
 
-int8_t BNO055_GetTemp(I2C_HandleTypeDef *huart){
-	if (!BNO055_Chip_ID_Check(huart)) {
-			return 0;
-		}
+int8_t BNO055_GetTemp(I2C_HandleTypeDef *huart, double *temp_ptr) {
+	int8_t rslt;
+	uint8_t temp;
+	rslt = BNO055_Chip_ID_Check(huart);
+	if (rslt != BNO055_OK) {
+		return rslt;
+	}
 
-	return read8(huart, BNO055_READ_ADDR,BNO055_TEMP_ADDR);
+	rslt = read8(huart, BNO055_READ_ADDR, BNO055_TEMP_ADDR, &temp);
+	if (rslt != HAL_OK) {
+		return rslt;
+	}
+
+	//TODO: Better temperature conversion
+	*temp_ptr = (double) temp;
+
+	return BNO055_OK;
 }
 

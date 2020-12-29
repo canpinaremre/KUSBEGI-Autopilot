@@ -46,6 +46,7 @@
 #define __BMP280_H__
 
 #include "bmp280_defs.h"
+#include <lib/parameters/parameters.h>
 
 /*! CPP guard */
 #ifdef __cplusplus

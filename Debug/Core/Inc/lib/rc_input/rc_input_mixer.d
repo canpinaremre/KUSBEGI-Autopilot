@@ -32,6 +32,7 @@ Core/Inc/lib/rc_input/rc_input_mixer.o: \
  ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_tim.h \
  ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_tim_ex.h \
  ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_uart.h \
+ ../Core/Inc/lib/parameters/parameters.h \
  ../Core/Inc/lib/rc_input/rc_input_sbus.h
 
 ../Core/Inc/lib/rc_input/rc_input_mixer.h:
@@ -97,5 +98,7 @@ Core/Inc/lib/rc_input/rc_input_mixer.o: \
 ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_tim_ex.h:
 
 ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_uart.h:
+
+../Core/Inc/lib/parameters/parameters.h:
 
 ../Core/Inc/lib/rc_input/rc_input_sbus.h:

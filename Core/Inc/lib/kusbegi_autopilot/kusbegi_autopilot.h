@@ -4,13 +4,14 @@
  * Language:  C
  */
 
-#ifndef KUSBEGI_AUTOPILOT_H
-#define KUSBEGI_AUTOPILOT_H
+#ifndef __KUSBEGI_AUTOPILOT_H__
+#define __KUSBEGI_AUTOPILOT_H__
 
 #include "stm32f4xx_hal.h"
 #include <drivers/imu/imu.h>
 #include <lib/output_mixer/output_mixer.h>
 #include <module/send_message/sendMsg.h>
+#include <lib/parameters/parameters.h>
 
 #define LOOP1DELAY_MS 1000 		//1 Hz
 #define LOOP2DELAY_MS 2000 		//0.5 Hz
@@ -76,7 +77,7 @@ OUTPUT_MIXER output_mixer;
 uint32_t kusbegi_tick;
 
 /* This function initialize all Flight Controller */
-uint8_t kusbegi_init(I2C_HandleTypeDef *huartI2C,KUSBEGI *kusbegi,UART_HandleTypeDef* huart);
+int8_t kusbegi_init(I2C_HandleTypeDef *huartI2C,KUSBEGI *kusbegi,UART_HandleTypeDef* huart);
 
 /* This is the main loop function */
 void kusbegi_loop(UART_HandleTypeDef* huart,I2C_HandleTypeDef *huartI2C,KUSBEGI *kusbegi);
@@ -89,5 +90,5 @@ void loop4(UART_HandleTypeDef* huart,KUSBEGI *kusbegi,OUTPUT_MIXER *output_mixer
 void loop5(UART_HandleTypeDef* huart);
 void loop6(UART_HandleTypeDef* huart);
 
-/* #ifndef KUSBEGI_AUTOPILOT_H */
+/* #ifndef __KUSBEGI_AUTOPILOT_H__ */
 #endif

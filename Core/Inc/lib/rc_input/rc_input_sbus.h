@@ -3,11 +3,12 @@
  * Purpose: To read RC SBUS data
  * Language:  C
  */
-#ifndef RC_INPUT_SBUS_H
-#define RC_INPUT_SBUS_H
+#ifndef __RC_INPUT_SBUS_H__
+#define __RC_INPUT_SBUS_H__
 
 #include "stm32f4xx_hal.h"
 #include <module/utility/utility_math.h>
+#include <lib/parameters/parameters.h>
 
 #define SBUS_MAX_CHANNEL_CNT 	6
 #define SBUS_IN_MIN_PWM 		172
@@ -46,5 +47,5 @@ typedef struct{
 
 uint8_t RC_READ_SBUS(UART_HandleTypeDef *huart,SBUS *sbus);
 
-/* #ifndef RC_INPUT_SBUS_H */
+/* #ifndef __RC_INPUT_SBUS_H__ */
 #endif

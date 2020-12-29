@@ -4,8 +4,8 @@
  * Language:  C
  */
 
-#ifndef UTILITY_MATH_H
-#define UTILITY_MATH_H
+#ifndef __UTILITY_MATH_H__
+#define __UTILITY_MATH_H__
 
 #include "stm32f4xx_hal.h"
 #include <math.h>
@@ -19,5 +19,5 @@ double roll_from_accel(double y_Buff , double z_Buff);
 
 double pitch_from_accel(double x_Buff , double y_Buff,double z_Buff);
 
-/* #ifndef UTILITY_MATH_H */
+/* #ifndef __UTILITY_MATH_H__ */
 #endif

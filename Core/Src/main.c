@@ -110,7 +110,9 @@ int main(void)
 
 	KUSBEGI kusbegi;
 
-	kusbegi_init(&hi2c1,&kusbegi,&huart2);
+	if(!kusbegi_init(&hi2c1,&kusbegi,&huart2)){
+		sendString("init basarili", &huart2, 1);
+	}
 
   /* USER CODE END 2 */
 

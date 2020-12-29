@@ -9,7 +9,7 @@
 #ifdef RC_INPUT_IS_SBUS
 #include "rc_input_sbus.h"
 
-uint8_t update_rc_input(UART_HandleTypeDef *huart,RC_INPUT *rc_input){
+int8_t update_rc_input(UART_HandleTypeDef *huart,RC_INPUT *rc_input){
 	if(RC_READ_SBUS(huart,&sbus)){
 
 		/* Reading channel pwm values */
@@ -111,17 +111,22 @@ uint8_t update_rc_input(UART_HandleTypeDef *huart,RC_INPUT *rc_input){
 		rc_input->connection_error = 0;
 	}
 
-	return 1;
+	return RC_INPUT_OK;
 }
 
 
-void init_rc_input(RC_INPUT *rc_input){
+int8_t init_rc_input(RC_INPUT *rc_input){
 	rc_input->rc_channels[throttle].pwm_value = 0;
+	rc_input->rc_channels[yaw].pwm_value = 0;
+	rc_input->rc_channels[pitch].pwm_value = 0;
+	rc_input->rc_channels[roll].pwm_value = 0;
 	rc_input->arm_state = 0;
 	sbus.arm = 0;
 	sbus.disarm = 0;
 	sbus.arm_cnt = 0;
 	sbus.disarm_cnt = 0;
+
+	return RC_INPUT_OK;
 }
 /* #ifdef RC_INPUT_IS_SBUS */
 #endif

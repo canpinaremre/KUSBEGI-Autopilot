@@ -1,2 +1,2 @@
-rc_input_mixer.c:12:9:update_rc_input	40	static
-rc_input_mixer.c:118:6:init_rc_input	16	static
+rc_input_mixer.c:12:8:update_rc_input	40	static
+rc_input_mixer.c:118:8:init_rc_input	16	static

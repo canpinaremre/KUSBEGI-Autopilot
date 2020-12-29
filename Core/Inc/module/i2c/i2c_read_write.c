@@ -10,19 +10,23 @@
 
 
 
-uint8_t write8(I2C_HandleTypeDef *huart,uint8_t device,uint8_t reg,uint8_t val){
+int8_t write8(I2C_HandleTypeDef *huart,uint8_t device,uint8_t reg,uint8_t val){
+	int8_t rslt;
 	buffer_i2c[0] = reg;
 	buffer_i2c[1] = val;
-	HAL_I2C_Master_Transmit(huart, device, buffer_i2c, 2, I2C_TRANSMIT_TIMEOUT);
+	rslt = HAL_I2C_Master_Transmit(huart, device, buffer_i2c, 2, I2C_TRANSMIT_TIMEOUT);
 
-	return 1;
+	return rslt;
 }
 
-uint8_t read8(I2C_HandleTypeDef *huart,uint8_t device,uint8_t reg){
+int8_t read8(I2C_HandleTypeDef *huart,uint8_t device,uint8_t reg,uint8_t *val){
+	int8_t rslt;
 	buffer_i2c[0] = reg;
-	HAL_I2C_Master_Transmit(huart, device, buffer_i2c, 1, I2C_TRANSMIT_TIMEOUT);
-	HAL_I2C_Master_Receive(huart, device, &buffer_i2c[1], 1, I2C_RECEIVE_TIMEOUT);
-	return buffer_i2c[1];
+	rslt = HAL_I2C_Master_Transmit(huart, device, buffer_i2c, 1, I2C_TRANSMIT_TIMEOUT);
+	if(rslt == HAL_OK)
+		rslt = HAL_I2C_Master_Receive(huart, device, &buffer_i2c[1], 1, I2C_RECEIVE_TIMEOUT);
+	*val = buffer_i2c[1];
+	return rslt;
 }
 
 //uint32_t read24(I2C_HandleTypeDef *huart,uint8_t device,uint8_t reg){
