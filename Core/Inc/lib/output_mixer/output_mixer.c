@@ -128,12 +128,12 @@ int8_t init_output_mixer(OUTPUT_MIXER *output_mixer,I2C_HandleTypeDef *huartI2C,
 	return OUTPUT_MIXER_OK;
 }
 
-int8_t calculate_pid_values(OUTPUT_MIXER *output_mixer,RC_INPUT *rc_input,IMU *imu){
+int8_t calculate_pid_values(OUTPUT_MIXER *output_mixer,IMU *imu,float setpoint_yaw,float setpoint_pitch,float setpoint_roll,float setpoint_altitude){
 
-	output_mixer->PID_ROLL_OUTPUT = PIDController_Update(&pid_roll,rc_input->rc_channels[roll].mapped_value,imu->ypr[2]);
-	output_mixer->PID_PITCH_OUTPUT = PIDController_Update(&pid_pitch,rc_input->rc_channels[pitch].mapped_value,imu->ypr[1]);
-	output_mixer->PID_YAW_OUTPUT = PIDController_Update(&pid_yaw,rc_input->rc_channels[yaw].mapped_value,imu->ypr[0]);
-	output_mixer->PID_ALTITUDE_OUTPUT = rc_input->rc_channels[throttle].pwm_value;
+	output_mixer->PID_YAW_OUTPUT = PIDController_Update(&pid_yaw,setpoint_yaw,imu->ypr[0]);
+	output_mixer->PID_PITCH_OUTPUT = PIDController_Update(&pid_pitch,setpoint_pitch,imu->ypr[1]);
+	output_mixer->PID_ROLL_OUTPUT = PIDController_Update(&pid_roll,setpoint_roll,imu->ypr[2]);
+	output_mixer->PID_ALTITUDE_OUTPUT = PIDController_Update(&pid_altitude,setpoint_altitude,imu->altitude);
 
 	return OUTPUT_MIXER_OK;
 }
@@ -185,20 +185,23 @@ int8_t set_motor_pwm_values(OUTPUT_MIXER *output_mixer){
 }
 
 
-int8_t update_pid(OUTPUT_MIXER *output_mixer) {
-
+int8_t update_pid(OUTPUT_MIXER *output_mixer, float setpoint_yaw,
+		float setpoint_pitch, float setpoint_roll, float setpoint_altitude) {
+	int8_t rslt;
 	/* Calculate PID*/
-	calculate_pid_values(output_mixer, &rc_input, &imu);
+	rslt = calculate_pid_values(output_mixer, &imu, setpoint_yaw,
+			setpoint_pitch, setpoint_roll, setpoint_altitude);
 
-	return OUTPUT_MIXER_OK;
+	return rslt;
 }
 
-int8_t update_imu(OUTPUT_MIXER *output_mixer, I2C_HandleTypeDef *huartI2C) {
+int8_t update_imu(OUTPUT_MIXER *output_mixer, I2C_HandleTypeDef *huartI2C,
+		KUSBEGI_FLAGS *kusbegi_flags) {
 	int8_t rslt;
 
 	/* Read IMU*/
-	rslt = read_imu(&imu, huartI2C);
-	if(rslt != IMU_READ_OK){
+	rslt = read_imu(&imu, huartI2C, kusbegi_flags);
+	if (rslt != IMU_READ_OK) {
 		return rslt;
 	}
 	/* Copy IMU to output_mixer struct*/
@@ -228,8 +231,18 @@ int8_t update_rc(OUTPUT_MIXER *output_mixer, UART_HandleTypeDef *huartRC) {
 	if (rslt != RC_INPUT_OK) {
 		return rslt;
 	}
+
+	if(output_mixer->RC_INPUT.rc_channels[mode].bool_value != rc_input.rc_channels[mode].bool_value ){
+		//update_flight_mode(uint8_t old_mode,uint8_t new_mode);
+
+	}
+
+
 	/* Copy RC to output_mixer struct*/
 	output_mixer->RC_INPUT = rc_input;
+
+
+
 
 
 	return OUTPUT_MIXER_OK;

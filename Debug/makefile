@@ -18,6 +18,10 @@ RM := rm -rf
 -include Core/Inc/lib/pid/subdir.mk
 -include Core/Inc/lib/output_mixer/subdir.mk
 -include Core/Inc/lib/kusbegi_autopilot/subdir.mk
+-include Core/Inc/lib/flight_tasks/task_manuel/subdir.mk
+-include Core/Inc/lib/flight_tasks/flight_task/subdir.mk
+-include Core/Inc/lib/flight_modes/mode_stabilize/subdir.mk
+-include Core/Inc/lib/flight_modes/flight_mode/subdir.mk
 -include Core/Inc/drivers/imu/subdir.mk
 -include Core/Inc/drivers/BNO055/subdir.mk
 -include Core/Inc/drivers/BMP280/subdir.mk

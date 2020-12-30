@@ -6,6 +6,7 @@
 
 #ifndef __PARAMETERS_H__
 #define __PARAMETERS_H__
+#include "stm32f4xx_hal.h"
 
 /*******************************************************/
 /*! @name BMP280 Return codes */
@@ -80,7 +81,16 @@
 /*! @name BNO055 Error codes */
 
 
+typedef struct{
+	uint8_t FLAG_IMU_READ_OK;
+	uint8_t FLAG_IMU_ACC_R_OK;
+	uint8_t FLAG_IMU_LIA_R_OK;
+	uint8_t FLAG_IMU_QUA_R_OK;
+	uint8_t FLAG_IMU_EUL_R_OK;
+	uint8_t FLAG_ARM;
+	uint8_t KILL_S;
 
+}KUSBEGI_FLAGS;
 
 
 

@@ -107,27 +107,38 @@ int8_t init_imu(IMU *imu,I2C_HandleTypeDef *huartI2C){
 	return IMU_INIT_OK;
 }
 
-int8_t read_imu(IMU *imu,I2C_HandleTypeDef *huart){
+int8_t read_imu(IMU *imu,I2C_HandleTypeDef *huart,KUSBEGI_FLAGS *kusbegi_flags){
 	int8_t rslt;
 
 #ifdef Selected_IMU_BNO055
 
 	rslt = BNO055_Read_Acc(huart, imu->accelXYZ);
 	if (rslt != BNO055_OK) {
+		kusbegi_flags->FLAG_IMU_ACC_R_OK = 0;
 		return rslt;
 	}
+	kusbegi_flags->FLAG_IMU_ACC_R_OK = 1;
+
 	rslt = BNO055_Read_Eul(huart, imu->eulerXYZ);
 	if (rslt != BNO055_OK) {
+		kusbegi_flags->FLAG_IMU_EUL_R_OK = 0;
 		return rslt;
 	}
+	kusbegi_flags->FLAG_IMU_EUL_R_OK = 1;
+
 	rslt = BNO055_Read_Qua(huart, imu->quaternionWXYZ);
 	if (rslt != BNO055_OK) {
+		kusbegi_flags->FLAG_IMU_QUA_R_OK = 0;
 		return rslt;
 	}
+	kusbegi_flags->FLAG_IMU_QUA_R_OK = 1;
+
 	rslt = BNO055_Read_Lia(huart, imu->liaXYZ);
 	if (rslt != BNO055_OK) {
+		kusbegi_flags->FLAG_IMU_LIA_R_OK = 0;
 		return rslt;
 	}
+	kusbegi_flags->FLAG_IMU_LIA_R_OK = 1;
 
 /* #ifdef Selected_IMU_BNO055 */
 #endif

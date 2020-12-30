@@ -1,8 +1,8 @@
 kusbegi_autopilot.c:8:8:kusbegi_init	32	static
-kusbegi_autopilot.c:35:6:kusbegi_loop	24	static
-kusbegi_autopilot.c:68:6:loop1	16	static
-kusbegi_autopilot.c:73:6:loop2	24	static
-kusbegi_autopilot.c:79:6:loop3	16	static
-kusbegi_autopilot.c:85:6:loop4	24	static
-kusbegi_autopilot.c:99:6:loop5	16	static
-kusbegi_autopilot.c:103:6:loop6	16	static
+kusbegi_autopilot.c:38:6:kusbegi_loop	24	static
+kusbegi_autopilot.c:69:6:loop1	24	static
+kusbegi_autopilot.c:94:6:loop2	24	static
+kusbegi_autopilot.c:97:6:loop3	24	static
+kusbegi_autopilot.c:100:6:loop4	24	static
+kusbegi_autopilot.c:103:6:loop5	24	static
+kusbegi_autopilot.c:106:6:loop6	24	static

@@ -14,6 +14,7 @@
 #include <module/send_message/sendMsg.h>
 #include <lib/parameters/parameters.h>
 
+
 #define OUTPUT_MIXER_MAX_PWM 2000
 #define OUTPUT_MIXER_MIN_PWM 1000
 /* ROLL and PITCH PID VALUES */
@@ -72,16 +73,17 @@ IMU imu;
 int8_t init_output_mixer(OUTPUT_MIXER *output_mixer,I2C_HandleTypeDef *huartI2C,UART_HandleTypeDef* huart);
 
 /* This function calculates PID values with IMU and RC readings*/
-int8_t calculate_pid_values(OUTPUT_MIXER *output_mixer,RC_INPUT *rc_input,IMU *imu);
+int8_t calculate_pid_values(OUTPUT_MIXER *output_mixer,IMU *imu,float setpoint_yaw,float setpoint_pitch,float setpoint_roll,float setpoint_altitude);
 
 /* This function set motor pwm values*/
 int8_t set_motor_pwm_values(OUTPUT_MIXER *output_mixer);
 
 /* This function updates the PID */
-int8_t update_pid(OUTPUT_MIXER *output_mixer);
+int8_t update_pid(OUTPUT_MIXER *output_mixer, float setpoint_yaw,
+		float setpoint_pitch, float setpoint_roll, float setpoint_altitude);
 
 /* This function updates the imu and output_mixer struct */
-int8_t update_imu(OUTPUT_MIXER *output_mixer, I2C_HandleTypeDef *huartI2C);
+int8_t update_imu(OUTPUT_MIXER *output_mixer, I2C_HandleTypeDef *huartI2C,KUSBEGI_FLAGS *kusbegi_flags);
 
 /* This function updates the rc and output_mixer struct */
 int8_t update_rc(OUTPUT_MIXER *output_mixer, UART_HandleTypeDef *huartRC);

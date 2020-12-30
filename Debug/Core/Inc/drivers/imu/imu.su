@@ -1,8 +1,8 @@
 imu.c:10:8:init_imu	32	static
-imu.c:110:8:read_imu	24	static
-imu.c:138:8:reset_imu	24	static
-imu.c:144:8:set_imu	24	static
-imu.c:153:8:read_barometer	32	static
-imu.c:201:6:delay_ms	16	static
-imu.c:219:8:i2c_reg_write	24	static
-imu.c:246:8:i2c_reg_read	32	static
+imu.c:110:8:read_imu	32	static
+imu.c:149:8:reset_imu	24	static
+imu.c:155:8:set_imu	24	static
+imu.c:164:8:read_barometer	32	static
+imu.c:212:6:delay_ms	16	static
+imu.c:230:8:i2c_reg_write	24	static
+imu.c:257:8:i2c_reg_read	32	static

@@ -29,6 +29,9 @@ int8_t kusbegi_init(I2C_HandleTypeDef *huartI2C,KUSBEGI *kusbegi,UART_HandleType
 	last_tick_l5 = 0;
 	last_tick_l6 = 0;
 	kusbegi_tick = 0;
+
+
+
 	return rslt;
 }
 
@@ -36,71 +39,69 @@ void kusbegi_loop(UART_HandleTypeDef* huart,I2C_HandleTypeDef *huartI2C,KUSBEGI 
 
 	kusbegi_tick = HAL_GetTick();
 
-//	if (kusbegi_tick - last_tick_l1 >= LOOP1DELAY_MS) {
-//		loop1(huart);
-//		last_tick_l1 = HAL_GetTick();
-//	}
-//	if (kusbegi_tick - last_tick_l2 >= LOOP2DELAY_MS) {
-//		loop2(huart,huartI2C);
-//		last_tick_l2 = HAL_GetTick();
-//	}
-//	if (kusbegi_tick - last_tick_l3 >= LOOP3DELAY_MS) {
-//		loop3(huart);
-//		last_tick_l3 = HAL_GetTick();
-//	}
+	if (kusbegi_tick - last_tick_l1 >= LOOP1DELAY_MS) {
+		loop1(huart,huartI2C,kusbegi,&kusbegi_flags);
+		last_tick_l1 = HAL_GetTick();
+	}
+	if (kusbegi_tick - last_tick_l2 >= LOOP2DELAY_MS) {
+		loop2(huart,huartI2C,kusbegi,&kusbegi_flags);
+		last_tick_l2 = HAL_GetTick();
+	}
+	if (kusbegi_tick - last_tick_l3 >= LOOP3DELAY_MS) {
+		loop3(huart,huartI2C,kusbegi,&kusbegi_flags);
+		last_tick_l3 = HAL_GetTick();
+	}
 	if (kusbegi_tick - last_tick_l4 >= LOOP4DELAY_MS) {
-
-		if(update_imu(&output_mixer, huartI2C) == BNO055_OK)
-			loop4(huart,kusbegi,&output_mixer);
+		loop4(huart,huartI2C,kusbegi,&kusbegi_flags);
 		last_tick_l4 = HAL_GetTick();
 	}
-//	if (kusbegi_tick - last_tick_l5 >= LOOP5DELAY_MS) {
-//		loop5();
-//		last_tick_l5 = HAL_GetTick();
-//	}
-//	if (kusbegi_tick - last_tick_l6 >= LOOP6DELAY_MS) {
-//		loop6();
-//		last_tick_l6 = HAL_GetTick();
-//	}
+	if (kusbegi_tick - last_tick_l5 >= LOOP5DELAY_MS) {
+		loop5(huart,huartI2C,kusbegi,&kusbegi_flags);
+		last_tick_l5 = HAL_GetTick();
+	}
+	if (kusbegi_tick - last_tick_l6 >= LOOP6DELAY_MS) {
+		loop6(huart,huartI2C,kusbegi,&kusbegi_flags);
+		last_tick_l6 = HAL_GetTick();
+	}
 
 }
 
-void loop1(UART_HandleTypeDef* huart){
-	sendString("Loop1:", huart,1);
-	sendInt(LOOP1DELAY_MS, huart,1);
-}
+void loop1(UART_HandleTypeDef* huart,I2C_HandleTypeDef *huartI2C,KUSBEGI *kusbegi,KUSBEGI_FLAGS *kusbegi_flags){
 
-void loop2(UART_HandleTypeDef *huart, I2C_HandleTypeDef *huartI2C) {
+	if(update_imu(&output_mixer, huartI2C,kusbegi_flags) == OUTPUT_MIXER_OK){
+		kusbegi_flags->FLAG_IMU_READ_OK = 1;
+	}
+	else{
+		kusbegi_flags->FLAG_IMU_READ_OK = 0;
+	}
 
-	update_barometer(&output_mixer,huartI2C);
-	sendInt(imu.pressure, huart,1);
-	sendFloat((float)imu.temperature, huart,1);
-}
-void loop3(UART_HandleTypeDef* huart){
-	sendString("Loop3:", huart,1);
-	sendInt(LOOP3DELAY_MS, huart,1);
-}
+	if (kusbegi_flags->FLAG_IMU_READ_OK == 1) {
 
-/* This loop for IMU test*/
-void loop4(UART_HandleTypeDef* huart,KUSBEGI *kusbegi,OUTPUT_MIXER *output_mixer){
+		flight_mode_update(&flight_mode, &output_mixer, kusbegi_flags);
+		flight_task_update(&flight_task,&flight_mode, &output_mixer, kusbegi_flags);
+		update_pid(&output_mixer, flight_task.flight_task_setpoint.yaw,
+				flight_task.flight_task_setpoint.pitch,
+				flight_task.flight_task_setpoint.roll,
+				flight_task.flight_task_setpoint.altitude);
+		if((kusbegi_flags->FLAG_ARM == 1) && (kusbegi_flags->KILL_S == 0)){
+			set_motor_pwm_values(&output_mixer);
+		}
 
-
-	sendString("#ACC:,", huart,0);
-	sendFloat((-1.0f)*output_mixer->IMU.eulerXYZ[1], huart,0);
-	sendString(",", huart,0);
-	sendFloat(output_mixer->IMU.eulerXYZ[2], huart,0);
-	sendString(",", huart,0);
-	sendFloat(output_mixer->IMU.eulerXYZ[0], huart,0);
-	sendString(",", huart,1);
-	//HAL_Delay(500);
+	}
 
 }
 
-void loop5(UART_HandleTypeDef* huart){
-	sendString("Loop5:", huart,1);
-	sendInt(LOOP5DELAY_MS, huart,1);
+void loop2(UART_HandleTypeDef* huart,I2C_HandleTypeDef *huartI2C,KUSBEGI *kusbegi,KUSBEGI_FLAGS *kusbegi_flags){
 }
-void loop6(UART_HandleTypeDef* huart){
-	sendString("Loop6:", huart,1);
-	sendInt(LOOP6DELAY_MS, huart,1);
+
+void loop3(UART_HandleTypeDef* huart,I2C_HandleTypeDef *huartI2C,KUSBEGI *kusbegi,KUSBEGI_FLAGS *kusbegi_flags){
+}
+
+void loop4(UART_HandleTypeDef* huart,I2C_HandleTypeDef *huartI2C,KUSBEGI *kusbegi,KUSBEGI_FLAGS *kusbegi_flags){
+}
+
+void loop5(UART_HandleTypeDef* huart,I2C_HandleTypeDef *huartI2C,KUSBEGI *kusbegi,KUSBEGI_FLAGS *kusbegi_flags){
+}
+
+void loop6(UART_HandleTypeDef* huart,I2C_HandleTypeDef *huartI2C,KUSBEGI *kusbegi,KUSBEGI_FLAGS *kusbegi_flags){
 }

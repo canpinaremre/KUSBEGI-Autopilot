@@ -39,7 +39,9 @@ Core/Src/stm32f4xx_hal_msp.o: ../Core/Src/stm32f4xx_hal_msp.c \
  ../Core/Inc/lib/rc_input/rc_input_mixer.h \
  ../Core/Inc/module/utility/utility_math.h \
  ../Core/Inc/lib/rc_input/rc_input_sbus.h ../Core/Inc/lib/pid/pid.h \
- ../Core/Inc/module/send_message/sendMsg.h
+ ../Core/Inc/module/send_message/sendMsg.h \
+ ../Core/Inc/lib/flight_tasks/flight_task/flight_task.h \
+ ../Core/Inc/lib/flight_modes/flight_mode/flight_mode.h
 
 ../Core/Inc/main.h:
 
@@ -128,3 +130,7 @@ Core/Src/stm32f4xx_hal_msp.o: ../Core/Src/stm32f4xx_hal_msp.c \
 ../Core/Inc/lib/pid/pid.h:
 
 ../Core/Inc/module/send_message/sendMsg.h:
+
+../Core/Inc/lib/flight_tasks/flight_task/flight_task.h:
+
+../Core/Inc/lib/flight_modes/flight_mode/flight_mode.h:

@@ -12,11 +12,13 @@
 #include <lib/output_mixer/output_mixer.h>
 #include <module/send_message/sendMsg.h>
 #include <lib/parameters/parameters.h>
+#include <lib/flight_tasks/flight_task/flight_task.h>
+#include <lib/flight_modes/flight_mode/flight_mode.h>
 
 #define LOOP1DELAY_MS 1000 		//1 Hz
 #define LOOP2DELAY_MS 2000 		//0.5 Hz
 #define LOOP3DELAY_MS 250		//4 Hz
-#define LOOP4DELAY_MS 100		//10 Hz
+#define LOOP4DELAY_MS 180		//10 Hz
 #define LOOP5DELAY_MS 10		//100 Hz
 #define LOOP6DELAY_MS 5			//200 Hz
 
@@ -73,6 +75,9 @@ typedef struct{
 }KUSBEGI;
 
 OUTPUT_MIXER output_mixer;
+FLIGHT_MODE flight_mode;
+FLIGHT_TASK flight_task;
+KUSBEGI_FLAGS kusbegi_flags;
 
 uint32_t kusbegi_tick;
 
@@ -83,12 +88,12 @@ int8_t kusbegi_init(I2C_HandleTypeDef *huartI2C,KUSBEGI *kusbegi,UART_HandleType
 void kusbegi_loop(UART_HandleTypeDef* huart,I2C_HandleTypeDef *huartI2C,KUSBEGI *kusbegi);
 
 uint32_t last_tick_l1,last_tick_l2,last_tick_l3,last_tick_l4,last_tick_l5,last_tick_l6;
-void loop1(UART_HandleTypeDef* huart);
-void loop2(UART_HandleTypeDef* huart,I2C_HandleTypeDef *huartI2C);
-void loop3(UART_HandleTypeDef* huart);
-void loop4(UART_HandleTypeDef* huart,KUSBEGI *kusbegi,OUTPUT_MIXER *output_mixer);
-void loop5(UART_HandleTypeDef* huart);
-void loop6(UART_HandleTypeDef* huart);
+void loop1(UART_HandleTypeDef* huart,I2C_HandleTypeDef *huartI2C,KUSBEGI *kusbegi,KUSBEGI_FLAGS *kusbegi_flags);
+void loop2(UART_HandleTypeDef* huart,I2C_HandleTypeDef *huartI2C,KUSBEGI *kusbegi,KUSBEGI_FLAGS *kusbegi_flags);
+void loop3(UART_HandleTypeDef* huart,I2C_HandleTypeDef *huartI2C,KUSBEGI *kusbegi,KUSBEGI_FLAGS *kusbegi_flags);
+void loop4(UART_HandleTypeDef* huart,I2C_HandleTypeDef *huartI2C,KUSBEGI *kusbegi,KUSBEGI_FLAGS *kusbegi_flags);
+void loop5(UART_HandleTypeDef* huart,I2C_HandleTypeDef *huartI2C,KUSBEGI *kusbegi,KUSBEGI_FLAGS *kusbegi_flags);
+void loop6(UART_HandleTypeDef* huart,I2C_HandleTypeDef *huartI2C,KUSBEGI *kusbegi,KUSBEGI_FLAGS *kusbegi_flags);
 
 /* #ifndef __KUSBEGI_AUTOPILOT_H__ */
 #endif

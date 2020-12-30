@@ -22,6 +22,10 @@ SUBDIRS := \
 Core/Inc/drivers/BMP280 \
 Core/Inc/drivers/BNO055 \
 Core/Inc/drivers/imu \
+Core/Inc/lib/flight_modes/flight_mode \
+Core/Inc/lib/flight_modes/mode_stabilize \
+Core/Inc/lib/flight_tasks/flight_task \
+Core/Inc/lib/flight_tasks/task_manuel \
 Core/Inc/lib/kusbegi_autopilot \
 Core/Inc/lib/output_mixer \
 Core/Inc/lib/pid \
