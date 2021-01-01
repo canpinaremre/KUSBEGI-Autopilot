@@ -41,6 +41,7 @@ Core/Src/main.o: ../Core/Src/main.c ../Core/Inc/main.h \
  ../Core/Inc/lib/rc_input/rc_input_sbus.h ../Core/Inc/lib/pid/pid.h \
  ../Core/Inc/module/send_message/sendMsg.h \
  ../Core/Inc/lib/flight_tasks/flight_task/flight_task.h \
+ ../Core/Inc/lib/flight_tasks/task_manuel/task_manuel.h \
  ../Core/Inc/lib/flight_modes/flight_mode/flight_mode.h
 
 ../Core/Inc/main.h:
@@ -132,5 +133,7 @@ Core/Src/main.o: ../Core/Src/main.c ../Core/Inc/main.h \
 ../Core/Inc/module/send_message/sendMsg.h:
 
 ../Core/Inc/lib/flight_tasks/flight_task/flight_task.h:
+
+../Core/Inc/lib/flight_tasks/task_manuel/task_manuel.h:
 
 ../Core/Inc/lib/flight_modes/flight_mode/flight_mode.h:

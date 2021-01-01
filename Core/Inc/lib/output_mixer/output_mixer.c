@@ -6,7 +6,7 @@
 #include "output_mixer.h"
 
 
-int8_t init_output_mixer(OUTPUT_MIXER *output_mixer,I2C_HandleTypeDef *huartI2C,UART_HandleTypeDef* huart){
+int8_t init_output_mixer(OUTPUT_MIXER *output_mixer,I2C_HandleTypeDef *huartI2C){
 	int8_t rslt;
 
 	//Set PID values
@@ -184,6 +184,15 @@ int8_t set_motor_pwm_values(OUTPUT_MIXER *output_mixer){
 	return OUTPUT_MIXER_OK;
 }
 
+int8_t stop_motors(OUTPUT_MIXER *output_mixer){
+
+	output_mixer->PWM_US_MOTOR[0] = 0;
+	output_mixer->PWM_US_MOTOR[1] = 0;
+	output_mixer->PWM_US_MOTOR[2] = 0;
+	output_mixer->PWM_US_MOTOR[3] = 0;
+
+	return 1;
+}
 
 int8_t update_pid(OUTPUT_MIXER *output_mixer, float setpoint_yaw,
 		float setpoint_pitch, float setpoint_roll, float setpoint_altitude) {
@@ -224,7 +233,7 @@ int8_t update_barometer(OUTPUT_MIXER *output_mixer, I2C_HandleTypeDef *huartI2C)
 	return OUTPUT_MIXER_OK;
 }
 
-int8_t update_rc(OUTPUT_MIXER *output_mixer, UART_HandleTypeDef *huartRC) {
+int8_t update_rc(OUTPUT_MIXER *output_mixer, UART_HandleTypeDef *huartRC,KUSBEGI_FLAGS *kusbegi_flags) {
 	int8_t rslt;
 	/*Read RC*/
 	rslt = update_rc_input(huartRC, &rc_input);
@@ -232,9 +241,34 @@ int8_t update_rc(OUTPUT_MIXER *output_mixer, UART_HandleTypeDef *huartRC) {
 		return rslt;
 	}
 
-	if(output_mixer->RC_INPUT.rc_channels[mode].bool_value != rc_input.rc_channels[mode].bool_value ){
-		//update_flight_mode(uint8_t old_mode,uint8_t new_mode);
+	if(rc_input.connection_error){
+		kusbegi_flags->FLAG_RC_CONNECTION_E = 1;
+		return RC_INPUT_E_CONN_LOST;
+	}
 
+	if(rc_input.failsafe_state){
+		kusbegi_flags->FLAG_RC_FAILSAFE = 1;
+		return RC_INPUT_E_FAILSAFE;
+	}
+
+	if(rc_input.frame_lost){
+		kusbegi_flags->FLAG_RC_FRAME_LOST = 1;
+		return RC_INPUT_E_FRAME_LOST;
+	}
+
+	if(rc_input.rc_channels[kill_s].bool_value == 1){
+		kusbegi_flags->KILL_S = 1;
+		kusbegi_flags->KILL_S_CHANGE = 1;
+	}
+
+	if(output_mixer->RC_INPUT.arm_state !=rc_input.arm_state){
+		kusbegi_flags->FLAG_ARM_CHANGE = 1;
+	}
+
+	if ((output_mixer->RC_INPUT.rc_channels[mode].bool_value
+			!= rc_input.rc_channels[mode].bool_value)) {
+
+		kusbegi_flags->FLAG_MODE_CHANGE = 1;
 	}
 
 
@@ -245,7 +279,7 @@ int8_t update_rc(OUTPUT_MIXER *output_mixer, UART_HandleTypeDef *huartRC) {
 
 
 
-	return OUTPUT_MIXER_OK;
+	return rc_input.rc_channels[throttle].pwm_value;
 }
 
 

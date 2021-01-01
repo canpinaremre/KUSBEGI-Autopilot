@@ -8,7 +8,7 @@
 
 #include "stm32f4xx_hal.h"
 #include <lib/parameters/parameters.h>
-#include <lib/flight_tasks/flight_task/flight_task.h>
+#include <lib/flight_tasks/task_manuel/task_manuel.h>
 #include <lib/output_mixer/output_mixer.h>
 #include <lib/flight_modes/flight_mode/flight_mode.h>
 
@@ -38,7 +38,7 @@ typedef struct{
 	FLIGHT_TASK_SETPOINT flight_task_setpoint;
 	FLIGHT_TASK_SETPOINT lastflight_task_setpoint;
 }FLIGHT_TASK;
-
+float task_yaw,task_pitch,task_roll,task_altitude;
 int8_t flight_task_update(FLIGHT_TASK *flight_task,FLIGHT_MODE *flight_mode,OUTPUT_MIXER *output_mixer,KUSBEGI_FLAGS *kusbegi_flags);
 
 /* #ifndef __FLIGHT_TASK_H__ */

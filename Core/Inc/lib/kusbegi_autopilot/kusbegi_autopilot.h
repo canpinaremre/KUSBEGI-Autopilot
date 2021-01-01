@@ -15,26 +15,26 @@
 #include <lib/flight_tasks/flight_task/flight_task.h>
 #include <lib/flight_modes/flight_mode/flight_mode.h>
 
-#define LOOP1DELAY_MS 1000 		//1 Hz
-#define LOOP2DELAY_MS 2000 		//0.5 Hz
-#define LOOP3DELAY_MS 250		//4 Hz
-#define LOOP4DELAY_MS 180		//10 Hz
-#define LOOP5DELAY_MS 10		//100 Hz
+#define LOOP1DELAY_MS 10 		//100 Hz
+#define LOOP2DELAY_MS 20 		//50 Hz
+#define LOOP3DELAY_MS 40		//25 Hz
+#define LOOP4DELAY_MS 100		//10 Hz
+#define LOOP5DELAY_MS 1000		//1 Hz
 #define LOOP6DELAY_MS 5			//200 Hz
 
 typedef enum{
-	MODE_STABILIZE,
-	MODE_ALT_HOLD,
-	MODE_POS_HOLD,
-	MODE_LAND,
-	MODE_RTH,
-	MODE_OFFBOARD,
-	MODE_MISSION
+	MC_MODE_STABILIZE,
+	MC_MODE_ALT_HOLD,
+	MC_MODE_POS_HOLD,
+	MC_MODE_LAND,
+	MC_MODE_RTH,
+	MC_MODE_OFFBOARD,
+	MC_MODE_MISSION
 }MC_FLIGHT_MODE;
 
 typedef enum{
-	DISARM,
-	ARM
+	MC_DISARM,
+	MC_ARM
 }MC_ARM_STATE;
 
 typedef enum{
@@ -46,17 +46,17 @@ typedef enum{
 }MC_FC_STATE;
 
 typedef enum{
-	LANDED,
-	GROUND_CONTACT,
-	MAYBE_LANDED,
-	FREEFALL,
-	GROUND_EFFECT
+	MC_LANDED,
+	MC_GROUND_CONTACT,
+	MC_MAYBE_LANDED,
+	MC_FREEFALL,
+	MC_GROUND_EFFECT
 }MC_LAND_STATE;
 
 typedef enum{
-	GPS_HEALT_OK,
-	GPS_UNAVAILABLE,
-	GPS_HEALT_BAD,
+	MC_GPS_HEALT_OK,
+	MC_GPS_UNAVAILABLE,
+	MC_GPS_HEALT_BAD,
 }MC_GPS_AVAILABLE;
 
 
@@ -82,18 +82,18 @@ KUSBEGI_FLAGS kusbegi_flags;
 uint32_t kusbegi_tick;
 
 /* This function initialize all Flight Controller */
-int8_t kusbegi_init(I2C_HandleTypeDef *huartI2C,KUSBEGI *kusbegi,UART_HandleTypeDef* huart);
+int8_t kusbegi_init(UART_HandleTypeDef* huartMsg,I2C_HandleTypeDef *huartI2C,UART_HandleTypeDef* huartRC,KUSBEGI *kusbegi);
 
 /* This is the main loop function */
-void kusbegi_loop(UART_HandleTypeDef* huart,I2C_HandleTypeDef *huartI2C,KUSBEGI *kusbegi);
+void kusbegi_loop(UART_HandleTypeDef* huartMsg,I2C_HandleTypeDef *huartI2C,UART_HandleTypeDef* huartRC,KUSBEGI *kusbegi);
 
 uint32_t last_tick_l1,last_tick_l2,last_tick_l3,last_tick_l4,last_tick_l5,last_tick_l6;
-void loop1(UART_HandleTypeDef* huart,I2C_HandleTypeDef *huartI2C,KUSBEGI *kusbegi,KUSBEGI_FLAGS *kusbegi_flags);
-void loop2(UART_HandleTypeDef* huart,I2C_HandleTypeDef *huartI2C,KUSBEGI *kusbegi,KUSBEGI_FLAGS *kusbegi_flags);
-void loop3(UART_HandleTypeDef* huart,I2C_HandleTypeDef *huartI2C,KUSBEGI *kusbegi,KUSBEGI_FLAGS *kusbegi_flags);
-void loop4(UART_HandleTypeDef* huart,I2C_HandleTypeDef *huartI2C,KUSBEGI *kusbegi,KUSBEGI_FLAGS *kusbegi_flags);
-void loop5(UART_HandleTypeDef* huart,I2C_HandleTypeDef *huartI2C,KUSBEGI *kusbegi,KUSBEGI_FLAGS *kusbegi_flags);
-void loop6(UART_HandleTypeDef* huart,I2C_HandleTypeDef *huartI2C,KUSBEGI *kusbegi,KUSBEGI_FLAGS *kusbegi_flags);
+void loop1(UART_HandleTypeDef* huartMsg,I2C_HandleTypeDef *huartI2C,UART_HandleTypeDef* huartRC,KUSBEGI *kusbegi,KUSBEGI_FLAGS *kusbegi_flags);
+void loop2(UART_HandleTypeDef* huartMsg,I2C_HandleTypeDef *huartI2C,UART_HandleTypeDef* huartRC,KUSBEGI *kusbegi,KUSBEGI_FLAGS *kusbegi_flags);
+void loop3(UART_HandleTypeDef* huartMsg,I2C_HandleTypeDef *huartI2C,UART_HandleTypeDef* huartRC,KUSBEGI *kusbegi,KUSBEGI_FLAGS *kusbegi_flags);
+void loop4(UART_HandleTypeDef* huartMsg,I2C_HandleTypeDef *huartI2C,UART_HandleTypeDef* huartRC,KUSBEGI *kusbegi,KUSBEGI_FLAGS *kusbegi_flags);
+void loop5(UART_HandleTypeDef* huartMsg,I2C_HandleTypeDef *huartI2C,UART_HandleTypeDef* huartRC,KUSBEGI *kusbegi,KUSBEGI_FLAGS *kusbegi_flags);
+void loop6(UART_HandleTypeDef* huartMsg,I2C_HandleTypeDef *huartI2C,UART_HandleTypeDef* huartRC,KUSBEGI *kusbegi,KUSBEGI_FLAGS *kusbegi_flags);
 
 /* #ifndef __KUSBEGI_AUTOPILOT_H__ */
 #endif

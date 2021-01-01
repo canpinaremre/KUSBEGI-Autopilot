@@ -31,10 +31,10 @@ typedef struct{
 #define Selected_IMU_BNO055
 #define Selected_BAR_BMP280
 
-int8_t init_imu(IMU *imu,I2C_HandleTypeDef *huart);
-int8_t read_imu(IMU *imu,I2C_HandleTypeDef *huart,KUSBEGI_FLAGS *kusbegi_flags);
-int8_t reset_imu(IMU *imu,I2C_HandleTypeDef *huart);
-int8_t set_imu(IMU *imu,I2C_HandleTypeDef *huart);
+int8_t init_imu(IMU *imu,I2C_HandleTypeDef *huartI2C);
+int8_t read_imu(IMU *imu,I2C_HandleTypeDef *huartI2C,KUSBEGI_FLAGS *kusbegi_flags);
+int8_t reset_imu(IMU *imu,I2C_HandleTypeDef *huartI2C);
+int8_t set_imu(IMU *imu,I2C_HandleTypeDef *huartI2C);
 
 
 #ifdef Selected_BAR_BMP280

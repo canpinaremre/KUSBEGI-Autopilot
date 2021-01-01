@@ -107,33 +107,33 @@ int8_t init_imu(IMU *imu,I2C_HandleTypeDef *huartI2C){
 	return IMU_INIT_OK;
 }
 
-int8_t read_imu(IMU *imu,I2C_HandleTypeDef *huart,KUSBEGI_FLAGS *kusbegi_flags){
+int8_t read_imu(IMU *imu,I2C_HandleTypeDef *huartI2C,KUSBEGI_FLAGS *kusbegi_flags){
 	int8_t rslt;
 
 #ifdef Selected_IMU_BNO055
 
-	rslt = BNO055_Read_Acc(huart, imu->accelXYZ);
+	rslt = BNO055_Read_Acc(huartI2C, imu->accelXYZ);
 	if (rslt != BNO055_OK) {
 		kusbegi_flags->FLAG_IMU_ACC_R_OK = 0;
 		return rslt;
 	}
 	kusbegi_flags->FLAG_IMU_ACC_R_OK = 1;
 
-	rslt = BNO055_Read_Eul(huart, imu->eulerXYZ);
+	rslt = BNO055_Read_Eul(huartI2C, imu->eulerXYZ);
 	if (rslt != BNO055_OK) {
 		kusbegi_flags->FLAG_IMU_EUL_R_OK = 0;
 		return rslt;
 	}
 	kusbegi_flags->FLAG_IMU_EUL_R_OK = 1;
 
-	rslt = BNO055_Read_Qua(huart, imu->quaternionWXYZ);
+	rslt = BNO055_Read_Qua(huartI2C, imu->quaternionWXYZ);
 	if (rslt != BNO055_OK) {
 		kusbegi_flags->FLAG_IMU_QUA_R_OK = 0;
 		return rslt;
 	}
 	kusbegi_flags->FLAG_IMU_QUA_R_OK = 1;
 
-	rslt = BNO055_Read_Lia(huart, imu->liaXYZ);
+	rslt = BNO055_Read_Lia(huartI2C, imu->liaXYZ);
 	if (rslt != BNO055_OK) {
 		kusbegi_flags->FLAG_IMU_LIA_R_OK = 0;
 		return rslt;
@@ -146,13 +146,13 @@ int8_t read_imu(IMU *imu,I2C_HandleTypeDef *huart,KUSBEGI_FLAGS *kusbegi_flags){
 	return IMU_READ_OK;
 }
 
-int8_t reset_imu(IMU *imu,I2C_HandleTypeDef *huart){
+int8_t reset_imu(IMU *imu,I2C_HandleTypeDef *huartI2C){
 	int8_t rslt;
 	rslt = BNO055_E_EMPTY_FUNCTION;
 	return rslt;
 }
 
-int8_t set_imu(IMU *imu,I2C_HandleTypeDef *huart){
+int8_t set_imu(IMU *imu,I2C_HandleTypeDef *huartI2C){
 	int8_t rslt;
 	rslt = BNO055_E_EMPTY_FUNCTION;
 	return rslt;

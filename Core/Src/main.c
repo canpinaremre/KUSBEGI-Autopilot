@@ -110,9 +110,10 @@ int main(void)
 
 	KUSBEGI kusbegi;
 
-	if(!kusbegi_init(&hi2c1,&kusbegi,&huart2)){
-		sendString("init basarili", &huart2, 1);
-	}
+	sendString("init:", &huart2, 1);
+	sendInt(kusbegi_init(&huart2, &hi2c1, &huart1, &kusbegi), &huart2, 1);
+
+
 
   /* USER CODE END 2 */
 
@@ -121,7 +122,9 @@ int main(void)
   while (1)
   {
 
-		kusbegi_loop(&huart2,&hi2c1,&kusbegi);
+		kusbegi_loop(&huart2, &hi2c1, &huart1, &kusbegi);
+
+
 
 
 //	  TIM4->CCR1 = kusbegi.PWM_US_MOTOR[0];

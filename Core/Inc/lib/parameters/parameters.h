@@ -8,6 +8,20 @@
 #define __PARAMETERS_H__
 #include "stm32f4xx_hal.h"
 
+
+
+#define RC_FAILSAFE_TIME_MS					300
+
+/*
+ * DO NOT GIVE SAME NUMBER.
+ * 1, 2 and 3 IS USED ONLY
+ * RC mode channel mapped to 1,2 and 3
+ */
+#define RC_MODE_STABILIZE					1
+#define RC_MODE_ALT_HOLD					2
+#define RC_MODE_POS_HOLD					3
+#define RC_MODE_AUTO						99
+
 /*******************************************************/
 /*! @name BMP280 Return codes */
 /*! @name BMP280 Success code*/
@@ -59,9 +73,13 @@
 /*******************************************************/
 /*! @name RC_INPUT Return codes */
 /*! @name RC_INPUT Success code*/
-#define RC_INPUT_OK                          INT8_C(0)
+#define RC_INPUT_OK                         INT8_C(0)
 
 /*! @name RC_INPUT Error codes */
+#define RC_INPUT_E_CONN_LOST			 	INT8_C(-23)
+#define RC_INPUT_E_FRAME_LOST			 	INT8_C(-24)
+#define RC_INPUT_E_FAILSAFE			 		INT8_C(-25)
+#define RC_INPUT_E_UNKOWN					INT8_C(-26)
 
 
 /*******************************************************/
@@ -74,12 +92,16 @@
 
 
 /*******************************************************/
-/*! @name BNO055 Return codes */
-/*! @name BNO055 Success code*/
-#define BNO_OK                            INT8_C(0)
+/*! @name FLIGHT_MODE Return codes */
+/*! @name FLIGHT_MODE Success code*/
+#define FLIGHT_MODE_AVAILABLE               INT8_C(0)
 
-/*! @name BNO055 Error codes */
-
+/*! @name FLIGHT_MODE Error codes */
+#define FLIGHT_MODE_E_NO_GPS   				INT8_C(-27)
+#define FLIGHT_MODE_E_NO_BAR   				INT8_C(-28)
+#define FLIGHT_MODE_E_NO_IMU   				INT8_C(-29)
+#define FLIGHT_MODE_E_NO_LINK  				INT8_C(-30)
+#define FLIGHT_MODE_E_UNKOWN_MODE			INT8_C(-31)
 
 typedef struct{
 	uint8_t FLAG_IMU_READ_OK;
@@ -87,8 +109,15 @@ typedef struct{
 	uint8_t FLAG_IMU_LIA_R_OK;
 	uint8_t FLAG_IMU_QUA_R_OK;
 	uint8_t FLAG_IMU_EUL_R_OK;
+	uint8_t FLAG_BARO_R_OK;
 	uint8_t FLAG_ARM;
 	uint8_t KILL_S;
+	uint8_t KILL_S_CHANGE;
+	uint8_t FLAG_MODE_CHANGE;
+	uint8_t FLAG_ARM_CHANGE;
+	uint8_t FLAG_RC_FRAME_LOST;
+	uint8_t FLAG_RC_CONNECTION_E;
+	uint8_t FLAG_RC_FAILSAFE;
 
 }KUSBEGI_FLAGS;
 

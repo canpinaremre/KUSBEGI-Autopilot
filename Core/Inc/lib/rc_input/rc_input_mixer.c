@@ -9,8 +9,8 @@
 #ifdef RC_INPUT_IS_SBUS
 #include "rc_input_sbus.h"
 
-int8_t update_rc_input(UART_HandleTypeDef *huart,RC_INPUT *rc_input){
-	if(RC_READ_SBUS(huart,&sbus)){
+int8_t update_rc_input(UART_HandleTypeDef *huartRC,RC_INPUT *rc_input){
+	if(RC_READ_SBUS(huartRC,&sbus)){
 
 		/* Reading channel pwm values */
 		for (uint8_t i = 0; i < RC_INPUT_MIXER_CHANNEL_CNT; i++) {

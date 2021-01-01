@@ -32,7 +32,7 @@ Core/Inc/lib/flight_tasks/flight_task/flight_task.o: \
  ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_tim_ex.h \
  ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_uart.h \
  ../Core/Inc/lib/parameters/parameters.h \
- ../Core/Inc/lib/flight_tasks/flight_task/flight_task.h \
+ ../Core/Inc/lib/flight_tasks/task_manuel/task_manuel.h \
  ../Core/Inc/lib/output_mixer/output_mixer.h \
  ../Core/Inc/lib/rc_input/rc_input_mixer.h \
  ../Core/Inc/module/utility/utility_math.h \
@@ -108,7 +108,7 @@ Core/Inc/lib/flight_tasks/flight_task/flight_task.o: \
 
 ../Core/Inc/lib/parameters/parameters.h:
 
-../Core/Inc/lib/flight_tasks/flight_task/flight_task.h:
+../Core/Inc/lib/flight_tasks/task_manuel/task_manuel.h:
 
 ../Core/Inc/lib/output_mixer/output_mixer.h:
 

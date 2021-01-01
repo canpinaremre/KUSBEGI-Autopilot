@@ -1,7 +1,8 @@
-output_mixer.c:9:8:init_output_mixer	40	static
+output_mixer.c:9:8:init_output_mixer	32	static
 output_mixer.c:131:8:calculate_pid_values	32	static
 output_mixer.c:141:8:set_motor_pwm_values	24	static
-output_mixer.c:188:8:update_pid	40	static
-output_mixer.c:198:8:update_imu	32	static
-output_mixer.c:213:8:update_barometer	24	static
-output_mixer.c:227:8:update_rc	24	static
+output_mixer.c:187:8:stop_motors	16	static
+output_mixer.c:197:8:update_pid	40	static
+output_mixer.c:207:8:update_imu	32	static
+output_mixer.c:222:8:update_barometer	24	static
+output_mixer.c:236:8:update_rc	32	static
