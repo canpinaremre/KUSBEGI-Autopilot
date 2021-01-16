@@ -15,11 +15,15 @@ int8_t flight_task_update(FLIGHT_TASK *flight_task,FLIGHT_MODE *flight_mode,OUTP
 
 	}
 
-	flight_task->flight_task_setpoint.altitude = task_altitude;
 	flight_task->flight_task_setpoint.yaw = task_yaw;
 	flight_task->flight_task_setpoint.pitch = task_pitch;
 	flight_task->flight_task_setpoint.roll = task_roll;
+	flight_task->flight_task_setpoint.altitude = task_altitude;
 
+	output_mixer->SETPOINT_YPRA[0] = task_yaw;
+	output_mixer->SETPOINT_YPRA[1] = task_pitch;
+	output_mixer->SETPOINT_YPRA[2] = task_roll;
+	output_mixer->SETPOINT_YPRA[3] = task_altitude;
 
 	flight_task->lastflight_task_setpoint = flight_task->flight_task_setpoint;
 

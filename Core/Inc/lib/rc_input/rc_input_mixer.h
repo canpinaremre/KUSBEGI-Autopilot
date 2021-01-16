@@ -6,6 +6,8 @@
 
 #ifndef __RC_INPUT_MIXER_H__
 #define __RC_INPUT_MIXER_H__
+#include <module/utility/utility_math.h>
+#include <lib/parameters/parameters.h>
 
 #define RC_INPUT_MIXER_CHANNEL_CNT 	9
 #define RC_INPUT_MIXER_CH_THROTTLE 	0
@@ -18,16 +20,15 @@
 #define RC_INPUT_MIXER_CH_LAND 		7
 #define RC_INPUT_MIXER_CH_OFFBOARD 	8
 
-#define RC_INPUT_MIXER_YAW_MINMAX	20   // +- degrees per second
+#define RC_INPUT_MIXER_YAW_MINMAX	RC_YAW_MAX_DEGREE_PER_SECOND   // +- degrees per second
 #define RC_INPUT_MIXER_PITCH_MINMAX	20   // +- degrees
-#define RC_INPUT_MIXER_ROLL_MINMAX	60 	 // +- degrees
+#define RC_INPUT_MIXER_ROLL_MINMAX	20 	 // +- degrees
 #define RC_INPUT_MIXER_SWITCH_TH	1500 // PWM needed to activate the switch
 #define RC_INPUT_MIXER_MODE1_TH		1350 // MODE1 PWM between 1000 and RC_INPUT_MIXER_MODE1_TH
 #define RC_INPUT_MIXER_MODE2_TH		1700 // MODE2 PWM between RC_INPUT_MIXER_MODE1_TH and RC_INPUT_MIXER_MODE2_TH
 										 // MODE3 PWM between RC_INPUT_MIXER_MODE2_TH and 2000
 
-#include <module/utility/utility_math.h>
-#include <lib/parameters/parameters.h>
+
 
 typedef enum{
 	throttle = 	RC_INPUT_MIXER_CH_THROTTLE,

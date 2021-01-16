@@ -29,8 +29,10 @@ int8_t BNO055_Chip_ID_Check(I2C_HandleTypeDef *huart) {
 			return BNO055_OK;
 		} else
 			return BNO055_E_DEV_NOT_FOUND;
-	} else
+	} else{
 		return rslt;
+	}
+
 
 }
 

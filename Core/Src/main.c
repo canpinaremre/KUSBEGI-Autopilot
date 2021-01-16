@@ -122,15 +122,15 @@ int main(void)
   while (1)
   {
 
+
 		kusbegi_loop(&huart2, &hi2c1, &huart1, &kusbegi);
 
-
-
-
-//	  TIM4->CCR1 = kusbegi.PWM_US_MOTOR[0];
+	  TIM4->CCR1 = kusbegi.PWM_US_MOTOR[0];
 //	  TIM4->CCR2 = kusbegi.PWM_US_MOTOR[1];
-//	  TIM4->CCR3 = kusbegi.PWM_US_MOTOR[2];
+	  TIM4->CCR3 = kusbegi.PWM_US_MOTOR[2];
 //	  TIM4->CCR4 = kusbegi.PWM_US_MOTOR[3];
+
+
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */

@@ -13,7 +13,7 @@
 #include "stdio.h"
 #include <lib/parameters/parameters.h>
 
-void sendInt(uint32_t myInt,UART_HandleTypeDef* huart,uint8_t newLine);
+void sendInt(int32_t myInt,UART_HandleTypeDef* huart,uint8_t newLine);
 void sendString(char* myString,UART_HandleTypeDef* huart,uint8_t newLine);
 void sendFloat(float myFloat,UART_HandleTypeDef* huart,uint8_t newLine);
 

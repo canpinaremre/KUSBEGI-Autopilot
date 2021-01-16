@@ -8,7 +8,7 @@
 #include <module/send_message/sendMsg.h>
 
 
-void sendInt(uint32_t myInt,UART_HandleTypeDef* huart,uint8_t newLine){
+void sendInt(int32_t myInt,UART_HandleTypeDef* huart,uint8_t newLine){
 	char sendBuffer[30]="";
 	sprintf(sendBuffer, "%lu", myInt);
 	sendString(sendBuffer,huart,newLine);

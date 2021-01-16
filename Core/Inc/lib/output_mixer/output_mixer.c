@@ -113,6 +113,18 @@ int8_t init_output_mixer(OUTPUT_MIXER *output_mixer,I2C_HandleTypeDef *huartI2C)
 	output_mixer->RC_INPUT.rc_channels[pitch].pwm_value = 0;
 	output_mixer->RC_INPUT.rc_channels[roll].pwm_value = 0;
 
+	output_mixer->MEASURE_YPRA[0] = 0;
+	output_mixer->MEASURE_YPRA[1] = 0;
+	output_mixer->MEASURE_YPRA[2] = 0;
+	output_mixer->MEASURE_YPRA[3] = 0;
+
+	output_mixer->SETPOINT_YPRA[0] = 0;
+	output_mixer->SETPOINT_YPRA[1] = 0;
+	output_mixer->SETPOINT_YPRA[2] = 0;
+	output_mixer->SETPOINT_YPRA[3] = 0;
+
+	old_yaw = 0;
+
 	//init IMU
 	rslt = init_imu(&imu, huartI2C);
 	if(rslt != IMU_INIT_OK){
@@ -128,13 +140,17 @@ int8_t init_output_mixer(OUTPUT_MIXER *output_mixer,I2C_HandleTypeDef *huartI2C)
 	return OUTPUT_MIXER_OK;
 }
 
-int8_t calculate_pid_values(OUTPUT_MIXER *output_mixer,IMU *imu,float setpoint_yaw,float setpoint_pitch,float setpoint_roll,float setpoint_altitude){
+int8_t calculate_pid_values(OUTPUT_MIXER *output_mixer,IMU *imu){
 
-	output_mixer->PID_YAW_OUTPUT = PIDController_Update(&pid_yaw,setpoint_yaw,imu->ypr[0]);
-	output_mixer->PID_PITCH_OUTPUT = PIDController_Update(&pid_pitch,setpoint_pitch,imu->ypr[1]);
-	output_mixer->PID_ROLL_OUTPUT = PIDController_Update(&pid_roll,setpoint_roll,imu->ypr[2]);
-	output_mixer->PID_ALTITUDE_OUTPUT = PIDController_Update(&pid_altitude,setpoint_altitude,imu->altitude);
+	output_mixer->MEASURE_YPRA[0] = imu->yaw_dps;
+	output_mixer->MEASURE_YPRA[1] = imu->ypr[1];
+	output_mixer->MEASURE_YPRA[2] = imu->ypr[2];
 
+	output_mixer->PID_YAW_OUTPUT = PIDController_Update(&pid_yaw,output_mixer->SETPOINT_YPRA[0],output_mixer->MEASURE_YPRA[0]);
+	output_mixer->PID_PITCH_OUTPUT = PIDController_Update(&pid_pitch,output_mixer->SETPOINT_YPRA[1],output_mixer->MEASURE_YPRA[1]);
+	output_mixer->PID_ROLL_OUTPUT = PIDController_Update(&pid_roll,output_mixer->SETPOINT_YPRA[2],output_mixer->MEASURE_YPRA[2]);
+	//output_mixer->PID_ALTITUDE_OUTPUT = PIDController_Update(&pid_altitude,setpoint_altitude,imu->altitude);
+	output_mixer->PID_ALTITUDE_OUTPUT = output_mixer->SETPOINT_YPRA[3];
 	return OUTPUT_MIXER_OK;
 }
 
@@ -194,12 +210,10 @@ int8_t stop_motors(OUTPUT_MIXER *output_mixer){
 	return 1;
 }
 
-int8_t update_pid(OUTPUT_MIXER *output_mixer, float setpoint_yaw,
-		float setpoint_pitch, float setpoint_roll, float setpoint_altitude) {
+int8_t update_pid(OUTPUT_MIXER *output_mixer) {
 	int8_t rslt;
 	/* Calculate PID*/
-	rslt = calculate_pid_values(output_mixer, &imu, setpoint_yaw,
-			setpoint_pitch, setpoint_roll, setpoint_altitude);
+	rslt = calculate_pid_values(output_mixer, &imu);
 
 	return rslt;
 }
@@ -213,6 +227,7 @@ int8_t update_imu(OUTPUT_MIXER *output_mixer, I2C_HandleTypeDef *huartI2C,
 	if (rslt != IMU_READ_OK) {
 		return rslt;
 	}
+
 	/* Copy IMU to output_mixer struct*/
 	output_mixer->IMU = imu;
 
@@ -245,19 +260,28 @@ int8_t update_rc(OUTPUT_MIXER *output_mixer, UART_HandleTypeDef *huartRC,KUSBEGI
 		kusbegi_flags->FLAG_RC_CONNECTION_E = 1;
 		return RC_INPUT_E_CONN_LOST;
 	}
+	else{
+		kusbegi_flags->FLAG_RC_CONNECTION_E = 0;
+	}
 
 	if(rc_input.failsafe_state){
 		kusbegi_flags->FLAG_RC_FAILSAFE = 1;
 		return RC_INPUT_E_FAILSAFE;
+	}
+	else{
+		kusbegi_flags->FLAG_RC_FAILSAFE = 0;
 	}
 
 	if(rc_input.frame_lost){
 		kusbegi_flags->FLAG_RC_FRAME_LOST = 1;
 		return RC_INPUT_E_FRAME_LOST;
 	}
+	else{
+		kusbegi_flags->FLAG_RC_FRAME_LOST = 0;
+	}
 
-	if(rc_input.rc_channels[kill_s].bool_value == 1){
-		kusbegi_flags->KILL_S = 1;
+	if(rc_input.rc_channels[kill_s].bool_value != kusbegi_flags->KILL_S){
+		kusbegi_flags->KILL_S = rc_input.rc_channels[kill_s].bool_value;
 		kusbegi_flags->KILL_S_CHANGE = 1;
 	}
 

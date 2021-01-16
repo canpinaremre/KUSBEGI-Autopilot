@@ -43,6 +43,8 @@ int8_t init_imu(IMU *imu,I2C_HandleTypeDef *huartI2C){
 	imu->ypr[1] = 0;
 	imu->ypr[2] = 0;
 
+	imu->yaw_dps = 0.0f;
+
 #ifdef Selected_IMU_BNO055
 
 	rslt = BNO055_Init(huartI2C, OPERATION_MODE_NDOF, 10);
@@ -112,6 +114,13 @@ int8_t read_imu(IMU *imu,I2C_HandleTypeDef *huartI2C,KUSBEGI_FLAGS *kusbegi_flag
 
 #ifdef Selected_IMU_BNO055
 
+	rslt = BNO055_Read_Gyr(huartI2C, imu->gyrXYZ);
+	if (rslt != BNO055_OK) {
+		kusbegi_flags->FLAG_IMU_GYR_R_OK = 0;
+		return rslt;
+	}
+	kusbegi_flags->FLAG_IMU_GYR_R_OK = 1;
+
 	rslt = BNO055_Read_Acc(huartI2C, imu->accelXYZ);
 	if (rslt != BNO055_OK) {
 		kusbegi_flags->FLAG_IMU_ACC_R_OK = 0;
@@ -142,6 +151,16 @@ int8_t read_imu(IMU *imu,I2C_HandleTypeDef *huartI2C,KUSBEGI_FLAGS *kusbegi_flag
 
 /* #ifdef Selected_IMU_BNO055 */
 #endif
+
+//	imu->ypr[0] = imu->eulerXYZ[1];
+//	imu->ypr[2] = imu->eulerXYZ[2];
+//	imu->ypr[1] = imu->eulerXYZ[0];
+
+	//For Test Drone Confing
+	imu->ypr[2] = (-1.0f) * imu->eulerXYZ[1];
+	imu->ypr[0] = imu->eulerXYZ[0];
+	imu->ypr[1] = (-1.0f) * imu->eulerXYZ[2];
+	imu->yaw_dps =(-1.0f) * imu->gyrXYZ[2];
 
 	return IMU_READ_OK;
 }

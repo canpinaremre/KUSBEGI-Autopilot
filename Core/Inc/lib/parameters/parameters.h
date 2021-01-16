@@ -9,7 +9,7 @@
 #include "stm32f4xx_hal.h"
 
 
-
+#define RC_YAW_MAX_DEGREE_PER_SECOND		20
 #define RC_FAILSAFE_TIME_MS					300
 
 /*
@@ -106,6 +106,7 @@
 typedef struct{
 	uint8_t FLAG_IMU_READ_OK;
 	uint8_t FLAG_IMU_ACC_R_OK;
+	uint8_t FLAG_IMU_GYR_R_OK;
 	uint8_t FLAG_IMU_LIA_R_OK;
 	uint8_t FLAG_IMU_QUA_R_OK;
 	uint8_t FLAG_IMU_EUL_R_OK;

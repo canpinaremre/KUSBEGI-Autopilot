@@ -1,2 +1,3 @@
 i2c_read_write.c:13:8:write8	32	static
 i2c_read_write.c:22:8:read8	40	static
+i2c_read_write.c:50:6:I2C1_ClearBusyFlagErratum	56	static,ignoring_inline_asm

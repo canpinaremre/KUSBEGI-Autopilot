@@ -21,6 +21,7 @@ typedef struct{
 	float gyrXYZ[3];
 	float ypr[3];
 	float altitude;
+	float yaw_dps;
 	uint32_t pressure;
 	double temperature;
 	//TODO: IMU setter

@@ -30,6 +30,9 @@ int8_t kusbegi_init(UART_HandleTypeDef* huartMsg,I2C_HandleTypeDef *huartI2C,UAR
 	last_tick_l6 = 0;
 	kusbegi_tick = 0;
 
+	flight_mode.mode_type = mode_stabilize;
+	flight_task.task_type = task_manuel;
+
 	return rslt;
 }
 
@@ -76,16 +79,21 @@ void loop1(UART_HandleTypeDef* huartMsg,I2C_HandleTypeDef *huartI2C,UART_HandleT
 	flight_mode_update(&flight_mode, &output_mixer, kusbegi_flags);
 	flight_task_update(&flight_task, &flight_mode, &output_mixer,
 			kusbegi_flags);
-	update_pid(&output_mixer, flight_task.flight_task_setpoint.yaw,
-			flight_task.flight_task_setpoint.pitch,
-			flight_task.flight_task_setpoint.roll,
-			flight_task.flight_task_setpoint.altitude);
+	update_pid(&output_mixer);
 	if ((kusbegi_flags->FLAG_ARM == 1) && (kusbegi_flags->KILL_S == 0)) {
+		//TODO: For test.
+		//Change later
+		output_mixer.PID_PITCH_OUTPUT = 0.0f;
+		output_mixer.PID_YAW_OUTPUT = 0.0f;
 		set_motor_pwm_values(&output_mixer);
 	}
 	else{
 		stop_motors(&output_mixer);
 	}
+	kusbegi->PWM_US_MOTOR[0] = output_mixer.PWM_US_MOTOR[0];
+	kusbegi->PWM_US_MOTOR[1] = output_mixer.PWM_US_MOTOR[1];
+	kusbegi->PWM_US_MOTOR[2] = output_mixer.PWM_US_MOTOR[2];
+	kusbegi->PWM_US_MOTOR[3] = output_mixer.PWM_US_MOTOR[3];
 
 }
 
@@ -118,18 +126,50 @@ void loop4(UART_HandleTypeDef* huartMsg,I2C_HandleTypeDef *huartI2C,UART_HandleT
 
 	sendString("Throttle: ", huartMsg, 0);
 	sendFloat(output_mixer.RC_INPUT.rc_channels[throttle].mapped_value,huartMsg,1);
-	sendString("yaw: ", huartMsg, 0);
-	sendFloat(output_mixer.RC_INPUT.rc_channels[yaw].mapped_value,huartMsg,1);
-	sendString("pitch: ", huartMsg, 0);
-	sendFloat(output_mixer.RC_INPUT.rc_channels[pitch].mapped_value,huartMsg,1);
 	sendString("roll: ", huartMsg, 0);
 	sendFloat(output_mixer.RC_INPUT.rc_channels[roll].mapped_value,huartMsg,1);
 	sendString("ARM: ", huartMsg, 0);
-	if(output_mixer.RC_INPUT.arm_state){
+	if(kusbegi_flags->FLAG_ARM){
 		sendString("ARMED ", huartMsg, 1);
 	}
 	else
 		sendString("DISARM ", huartMsg, 1);
+
+	sendString("Flight Setpoint : ",huartMsg,0);
+	sendFloat(flight_task.flight_task_setpoint.roll,huartMsg,1);
+
+	sendString("Imu Roll : ", huartMsg, 0);
+	sendFloat(output_mixer.IMU.ypr[2], huartMsg, 1);
+
+	sendString("Imu Pitch : ", huartMsg, 0);
+	sendFloat(output_mixer.IMU.ypr[1], huartMsg, 1);
+
+	sendString("Imu Yaw : ", huartMsg, 0);
+	sendFloat(output_mixer.IMU.ypr[0], huartMsg, 1);
+
+	sendString("YAW DPS : ", huartMsg, 0);
+	sendFloat(output_mixer.IMU.yaw_dps, huartMsg, 1);
+
+	sendString("Right Motor PWM :",huartMsg,0);
+	sendInt(output_mixer.PWM_US_MOTOR[0],huartMsg,1);
+
+	sendString("Left Motor PWM :", huartMsg, 0);
+	sendInt(output_mixer.PWM_US_MOTOR[2], huartMsg, 1);
+
+	sendString("IMU read Flag:",huartMsg,0);
+	if(kusbegi_flags->FLAG_IMU_READ_OK){
+		sendString("OK",huartMsg,1);
+	}
+	else{
+		sendString("ERROR",huartMsg,1);
+	}
+
+	sendString("Mode :", huartMsg, 0);
+	sendInt(flight_mode.mode_type, huartMsg, 1);
+
+	sendString("Kill :", huartMsg, 0);
+	sendInt(kusbegi_flags->KILL_S, huartMsg, 1);
+
 
 }
 
