@@ -159,7 +159,7 @@ int8_t read_imu(IMU *imu,I2C_HandleTypeDef *huartI2C,KUSBEGI_FLAGS *kusbegi_flag
 	//For Test Drone Confing
 	imu->ypr[2] = (-1.0f) * imu->eulerXYZ[1];
 	imu->ypr[0] = imu->eulerXYZ[0];
-	imu->ypr[1] = (-1.0f) * imu->eulerXYZ[2];
+	imu->ypr[1] = (1.0f) * imu->eulerXYZ[2];
 	imu->yaw_dps =(-1.0f) * imu->gyrXYZ[2];
 
 	return IMU_READ_OK;

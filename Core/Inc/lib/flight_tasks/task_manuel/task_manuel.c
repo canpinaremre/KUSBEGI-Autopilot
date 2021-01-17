@@ -13,5 +13,11 @@ int8_t run_task_manuel(OUTPUT_MIXER *output_mixer, KUSBEGI_FLAGS *kusbegi_flags,
 
 
 	kusbegi_flags->FLAG_ARM = output_mixer->RC_INPUT.arm_state;
+
+	if(kusbegi_flags->FLAG_RC_FRAME_LOST || kusbegi_flags->FLAG_RC_FAILSAFE){
+		kusbegi_flags->FLAG_ARM = 0;
+	}
+
+
 	return 0;
 }

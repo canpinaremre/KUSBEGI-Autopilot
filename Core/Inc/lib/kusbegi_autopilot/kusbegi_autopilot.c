@@ -33,6 +33,7 @@ int8_t kusbegi_init(UART_HandleTypeDef* huartMsg,I2C_HandleTypeDef *huartI2C,UAR
 	flight_mode.mode_type = mode_stabilize;
 	flight_task.task_type = task_manuel;
 
+
 	return rslt;
 }
 
@@ -83,7 +84,8 @@ void loop1(UART_HandleTypeDef* huartMsg,I2C_HandleTypeDef *huartI2C,UART_HandleT
 	if ((kusbegi_flags->FLAG_ARM == 1) && (kusbegi_flags->KILL_S == 0)) {
 		//TODO: For test.
 		//Change later
-		output_mixer.PID_PITCH_OUTPUT = 0.0f;
+//		output_mixer.PID_PITCH_OUTPUT = 0.0f;
+//		output_mixer.PID_ROLL_OUTPUT = 0.0f;
 		output_mixer.PID_YAW_OUTPUT = 0.0f;
 		set_motor_pwm_values(&output_mixer);
 	}
@@ -100,6 +102,7 @@ void loop1(UART_HandleTypeDef* huartMsg,I2C_HandleTypeDef *huartI2C,UART_HandleT
 void loop2(UART_HandleTypeDef* huartMsg,I2C_HandleTypeDef *huartI2C,UART_HandleTypeDef* huartRC,KUSBEGI *kusbegi,KUSBEGI_FLAGS *kusbegi_flags){
 
 	update_rc(&output_mixer, huartRC,kusbegi_flags);
+
 
 	if(update_barometer(&output_mixer, huartI2C) == OUTPUT_MIXER_OK){
 			kusbegi_flags->FLAG_BARO_R_OK = 1;
@@ -136,7 +139,7 @@ void loop4(UART_HandleTypeDef* huartMsg,I2C_HandleTypeDef *huartI2C,UART_HandleT
 		sendString("DISARM ", huartMsg, 1);
 
 	sendString("Flight Setpoint : ",huartMsg,0);
-	sendFloat(flight_task.flight_task_setpoint.roll,huartMsg,1);
+	sendFloat(flight_task.flight_task_setpoint.pitch,huartMsg,1);
 
 	sendString("Imu Roll : ", huartMsg, 0);
 	sendFloat(output_mixer.IMU.ypr[2], huartMsg, 1);

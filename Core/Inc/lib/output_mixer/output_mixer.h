@@ -18,8 +18,8 @@
 #define OUTPUT_MIXER_MAX_PWM 2000
 #define OUTPUT_MIXER_MIN_PWM 1000
 /* ROLL and PITCH PID VALUES */
-#define PID_ROLL_PITCH_KP  2.2f
-#define PID_ROLL_PITCH_KI  4.1f
+#define PID_ROLL_PITCH_KP  2.1f
+#define PID_ROLL_PITCH_KI  3.1f
 #define PID_ROLL_PITCH_KD  0.55f
 
 #define PID_ROLL_PITCH_LIM_MIN -500.0f
@@ -29,8 +29,8 @@
 #define PID_ROLL_PITCH_LIM_MAX_INT  15.0f
 
 /* YAW PID VALUES*/
-#define PID_YAW_KP  2.0f
-#define PID_YAW_KI  0.5f
+#define PID_YAW_KP  1.0f
+#define PID_YAW_KI  0.0f
 #define PID_YAW_KD  0.25f
 
 #define PID_YAW_LIM_MIN -10.0f

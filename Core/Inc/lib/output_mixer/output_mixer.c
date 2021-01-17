@@ -171,22 +171,22 @@ int8_t set_motor_pwm_values(OUTPUT_MIXER *output_mixer){
 	output_mixer->PWM_US_MOTOR[0] =
 			(uint16_t) (output_mixer->PID_ALTITUDE_OUTPUT
 					- output_mixer->PID_ROLL_OUTPUT
-					+ output_mixer->PID_PITCH_OUTPUT
+					- output_mixer->PID_PITCH_OUTPUT
 					+ output_mixer->PID_YAW_OUTPUT);
 	output_mixer->PWM_US_MOTOR[1] =
 			(uint16_t) (output_mixer->PID_ALTITUDE_OUTPUT
 					+ output_mixer->PID_ROLL_OUTPUT
-					- output_mixer->PID_PITCH_OUTPUT
+					+ output_mixer->PID_PITCH_OUTPUT
 					+ output_mixer->PID_YAW_OUTPUT);
 	output_mixer->PWM_US_MOTOR[2] =
 			(uint16_t) (output_mixer->PID_ALTITUDE_OUTPUT
 					+ output_mixer->PID_ROLL_OUTPUT
-					+ output_mixer->PID_PITCH_OUTPUT
+					- output_mixer->PID_PITCH_OUTPUT
 					- output_mixer->PID_YAW_OUTPUT);
 	output_mixer->PWM_US_MOTOR[3] =
 			(uint16_t) (output_mixer->PID_ALTITUDE_OUTPUT
 					- output_mixer->PID_ROLL_OUTPUT
-					- output_mixer->PID_PITCH_OUTPUT
+					+ output_mixer->PID_PITCH_OUTPUT
 					- output_mixer->PID_YAW_OUTPUT);
 	/* Clamp output*/
 	for (uint8_t i = 0; i < 4; i++) {
