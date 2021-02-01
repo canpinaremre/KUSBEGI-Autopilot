@@ -244,7 +244,7 @@ int8_t BNO055_Set_Page(I2C_HandleTypeDef *huart,uint8_t page);
 
 //Reading Raw Data from BNO055
 int8_t BNO055_Read_Eul(I2C_HandleTypeDef *huart,float *eulerXYZ);
-int8_t BNO055_Read_Qua(I2C_HandleTypeDef *huart,float *quaternionWXYZ);
+int8_t BNO055_Read_Qua(I2C_HandleTypeDef *huart,double *quaternionWXYZ);
 int8_t BNO055_Read_Acc(I2C_HandleTypeDef *huart,float *accelXYZ);
 int8_t BNO055_Read_Mag(I2C_HandleTypeDef *huart,float *magXYZ);
 int8_t BNO055_Read_Gyr(I2C_HandleTypeDef *huart,float *gyrXYZ);

@@ -131,7 +131,7 @@ int8_t BNO055_Read_Eul(I2C_HandleTypeDef *huart,float *eulerXYZ) {
 	return BNO055_OK;
 }
 
-int8_t BNO055_Read_Qua(I2C_HandleTypeDef *huart,float *quaternionWXYZ) {
+int8_t BNO055_Read_Qua(I2C_HandleTypeDef *huart,double *quaternionWXYZ) {
 	int8_t rslt;
 	uint8_t temp;
 	rslt = BNO055_Chip_ID_Check(huart);
@@ -186,10 +186,10 @@ int8_t BNO055_Read_Qua(I2C_HandleTypeDef *huart,float *quaternionWXYZ) {
 	data_read[2] = (buffer[5]) | ((buffer[6]) << 8);
 	data_read[3] = (buffer[7]) | ((buffer[8]) << 8);
 
-	quaternionWXYZ[0] = (float) data_read[0] / 16383.0;
-	quaternionWXYZ[1] = (float) data_read[1] / 16383.0;
-	quaternionWXYZ[2] = (float) data_read[2] / 16383.0;
-	quaternionWXYZ[3] = (float) data_read[3] / 16383.0;
+	quaternionWXYZ[0] = (double) data_read[0] / 16383.0;
+	quaternionWXYZ[1] = (double) data_read[1] / 16383.0;
+	quaternionWXYZ[2] = (double) data_read[2] / 16383.0;
+	quaternionWXYZ[3] = (double) data_read[3] / 16383.0;
 
 	return BNO055_OK;
 }

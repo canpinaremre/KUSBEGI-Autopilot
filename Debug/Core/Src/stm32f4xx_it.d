@@ -35,9 +35,9 @@ Core/Src/stm32f4xx_it.o: ../Core/Src/stm32f4xx_it.c ../Core/Inc/main.h \
  ../Core/Inc/lib/parameters/parameters.h \
  ../Core/Inc/drivers/BMP280/BMP280.h \
  ../Core/Inc/drivers/BMP280/bmp280_defs.h \
+ ../Core/Inc/module/utility/utility_math.h \
  ../Core/Inc/lib/output_mixer/output_mixer.h \
  ../Core/Inc/lib/rc_input/rc_input_mixer.h \
- ../Core/Inc/module/utility/utility_math.h \
  ../Core/Inc/lib/rc_input/rc_input_sbus.h ../Core/Inc/lib/pid/pid.h \
  ../Core/Inc/module/send_message/sendMsg.h \
  ../Core/Inc/lib/flight_tasks/flight_task/flight_task.h \
@@ -121,11 +121,11 @@ Core/Src/stm32f4xx_it.o: ../Core/Src/stm32f4xx_it.c ../Core/Inc/main.h \
 
 ../Core/Inc/drivers/BMP280/bmp280_defs.h:
 
+../Core/Inc/module/utility/utility_math.h:
+
 ../Core/Inc/lib/output_mixer/output_mixer.h:
 
 ../Core/Inc/lib/rc_input/rc_input_mixer.h:
-
-../Core/Inc/module/utility/utility_math.h:
 
 ../Core/Inc/lib/rc_input/rc_input_sbus.h:
 

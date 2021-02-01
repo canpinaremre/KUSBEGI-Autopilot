@@ -8,7 +8,7 @@
 #define __PARAMETERS_H__
 #include "stm32f4xx_hal.h"
 
-
+#define ARM_SPIN_MOTOR_TIME					1500
 #define RC_YAW_MAX_DEGREE_PER_SECOND		20
 #define RC_FAILSAFE_TIME_MS					300
 
@@ -119,10 +119,14 @@ typedef struct{
 	uint8_t FLAG_RC_FRAME_LOST;
 	uint8_t FLAG_RC_CONNECTION_E;
 	uint8_t FLAG_RC_FAILSAFE;
-
+	uint8_t FLAG_SPIN_MOTOR;
 }KUSBEGI_FLAGS;
 
-
+/* If debugger_flag is -1 program stops*/
+int8_t debugger_flag;
+uint32_t count_for_debug;
+uint32_t count_for_debug2;
+uint32_t count_for_debug3;
 
 /* #ifndef __PARAMETERS_H_ */
 #endif

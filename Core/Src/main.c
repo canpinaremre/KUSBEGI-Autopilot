@@ -122,13 +122,15 @@ int main(void)
   while (1)
   {
 
-
+	  	if(debugger_flag != -1){
 		kusbegi_loop(&huart2, &hi2c1, &huart1, &kusbegi);
+	  	}
 
-	  TIM4->CCR1 = kusbegi.PWM_US_MOTOR[0];
-	  TIM4->CCR2 = kusbegi.PWM_US_MOTOR[1];
-	  TIM4->CCR3 = kusbegi.PWM_US_MOTOR[2];
-	  TIM4->CCR4 = kusbegi.PWM_US_MOTOR[3];
+
+		TIM4->CCR1 = kusbegi.PWM_US_MOTOR[0];
+		TIM4->CCR2 = kusbegi.PWM_US_MOTOR[1];
+		TIM4->CCR3 = kusbegi.PWM_US_MOTOR[2];
+		TIM4->CCR4 = kusbegi.PWM_US_MOTOR[3];
 
 
     /* USER CODE END WHILE */
@@ -197,8 +199,8 @@ static void MX_I2C1_Init(void)
 
   /* USER CODE END I2C1_Init 1 */
   hi2c1.Instance = I2C1;
-  hi2c1.Init.ClockSpeed = 100000;
-  hi2c1.Init.DutyCycle = I2C_DUTYCYCLE_2;
+  hi2c1.Init.ClockSpeed = 400000;
+  hi2c1.Init.DutyCycle = I2C_DUTYCYCLE_16_9;
   hi2c1.Init.OwnAddress1 = 0;
   hi2c1.Init.AddressingMode = I2C_ADDRESSINGMODE_7BIT;
   hi2c1.Init.DualAddressMode = I2C_DUALADDRESS_DISABLE;

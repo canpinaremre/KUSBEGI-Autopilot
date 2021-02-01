@@ -9,6 +9,9 @@
 #include <lib/parameters/parameters.h>
 #include <lib/output_mixer/output_mixer.h>
 
+uint8_t first_arm;
+uint32_t time_arm;
+
 int8_t run_task_manuel(OUTPUT_MIXER *output_mixer, KUSBEGI_FLAGS *kusbegi_flags,
 		float *task_yaw, float *task_pitch, float *task_roll, float *task_altitude);
 

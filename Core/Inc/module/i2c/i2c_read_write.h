@@ -9,8 +9,8 @@
 #include "stm32f4xx_hal.h"
 #include <lib/parameters/parameters.h>
 
-#define I2C_TRANSMIT_TIMEOUT 10
-#define I2C_RECEIVE_TIMEOUT 20
+#define I2C_TRANSMIT_TIMEOUT 1
+#define I2C_RECEIVE_TIMEOUT 1
 
 uint8_t buffer_i2c[2];
 /*

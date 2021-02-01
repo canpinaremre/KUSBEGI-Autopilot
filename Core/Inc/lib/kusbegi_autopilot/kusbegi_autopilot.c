@@ -33,27 +33,30 @@ int8_t kusbegi_init(UART_HandleTypeDef* huartMsg,I2C_HandleTypeDef *huartI2C,UAR
 	flight_mode.mode_type = mode_stabilize;
 	flight_task.task_type = task_manuel;
 
+	debugger_flag = 0;
+	count_for_debug = 0;
+	count_for_debug2 = 0;
 
 	return rslt;
 }
 
 void kusbegi_loop(UART_HandleTypeDef* huartMsg,I2C_HandleTypeDef *huartI2C,UART_HandleTypeDef* huartRC,KUSBEGI *kusbegi){
 
-	kusbegi_tick = HAL_GetTick();
-
-	if (kusbegi_tick - last_tick_l1 >= LOOP1DELAY_MS) {
+	if (HAL_GetTick() - last_tick_l1 >= LOOP1DELAY_MS) {
 		loop1(huartMsg,huartI2C,huartRC,kusbegi,&kusbegi_flags);
 		last_tick_l1 = HAL_GetTick();
+
 	}
-	if (kusbegi_tick - last_tick_l2 >= LOOP2DELAY_MS) {
+	if (HAL_GetTick() - last_tick_l2 >= LOOP2DELAY_MS) {
 		loop2(huartMsg,huartI2C,huartRC,kusbegi,&kusbegi_flags);
 		last_tick_l2 = HAL_GetTick();
 	}
-	if (kusbegi_tick - last_tick_l3 >= LOOP3DELAY_MS) {
-		loop3(huartMsg,huartI2C,huartRC,kusbegi,&kusbegi_flags);
-		last_tick_l3 = HAL_GetTick();
-	}
-	if (kusbegi_tick - last_tick_l4 >= LOOP4DELAY_MS) {
+
+//	if (kusbegi_tick - last_tick_l3 >= LOOP3DELAY_MS) {
+//		loop3(huartMsg,huartI2C,huartRC,kusbegi,&kusbegi_flags);
+//		last_tick_l3 = HAL_GetTick();
+//	}
+	if (HAL_GetTick() - last_tick_l4 >= LOOP4DELAY_MS) {
 		loop4(huartMsg,huartI2C,huartRC,kusbegi,&kusbegi_flags);
 		last_tick_l4 = HAL_GetTick();
 	}
@@ -61,10 +64,10 @@ void kusbegi_loop(UART_HandleTypeDef* huartMsg,I2C_HandleTypeDef *huartI2C,UART_
 //		loop5(huartMsg,huartI2C,huartRC,kusbegi,&kusbegi_flags);
 //		last_tick_l5 = HAL_GetTick();
 //	}
-	if (kusbegi_tick - last_tick_l6 >= LOOP6DELAY_MS) {
-		loop6(huartMsg,huartI2C,huartRC,kusbegi,&kusbegi_flags);
-		last_tick_l6 = HAL_GetTick();
-	}
+//	if (kusbegi_tick - last_tick_l6 >= LOOP6DELAY_MS) {
+//		loop6(huartMsg,huartI2C,huartRC,kusbegi,&kusbegi_flags);
+//		last_tick_l6 = HAL_GetTick();
+//	}
 
 }
 
@@ -80,17 +83,23 @@ void loop1(UART_HandleTypeDef* huartMsg,I2C_HandleTypeDef *huartI2C,UART_HandleT
 	flight_mode_update(&flight_mode, &output_mixer, kusbegi_flags);
 	flight_task_update(&flight_task, &flight_mode, &output_mixer,
 			kusbegi_flags);
-	update_pid(&output_mixer);
+	update_pid(&output_mixer,huartMsg);
 	if ((kusbegi_flags->FLAG_ARM == 1) && (kusbegi_flags->KILL_S == 0)) {
 		//TODO: For test.
 		//Change later
 //		output_mixer.PID_PITCH_OUTPUT = 0.0f;
 //		output_mixer.PID_ROLL_OUTPUT = 0.0f;
-		output_mixer.PID_YAW_OUTPUT = 0.0f;
+//		output_mixer.PID_YAW_OUTPUT = 0.0f;
 		set_motor_pwm_values(&output_mixer);
 	}
 	else{
 		stop_motors(&output_mixer);
+	}
+	if(kusbegi_flags->FLAG_SPIN_MOTOR){
+		output_mixer.PWM_US_MOTOR[0] = 1000;
+		output_mixer.PWM_US_MOTOR[1] = 1000;
+		output_mixer.PWM_US_MOTOR[2] = 1000;
+		output_mixer.PWM_US_MOTOR[3] = 1000;
 	}
 	kusbegi->PWM_US_MOTOR[0] = output_mixer.PWM_US_MOTOR[0];
 	kusbegi->PWM_US_MOTOR[1] = output_mixer.PWM_US_MOTOR[1];
@@ -138,8 +147,8 @@ void loop4(UART_HandleTypeDef* huartMsg,I2C_HandleTypeDef *huartI2C,UART_HandleT
 	else
 		sendString("DISARM ", huartMsg, 1);
 
-	sendString("Flight Setpoint : ",huartMsg,0);
-	sendFloat(flight_task.flight_task_setpoint.pitch,huartMsg,1);
+	sendString("Flag Arm change : ",huartMsg,0);
+	sendInt(kusbegi_flags->FLAG_ARM_CHANGE,huartMsg,1);
 
 	sendString("Imu Roll : ", huartMsg, 0);
 	sendFloat(output_mixer.IMU.ypr[2], huartMsg, 1);
@@ -153,11 +162,17 @@ void loop4(UART_HandleTypeDef* huartMsg,I2C_HandleTypeDef *huartI2C,UART_HandleT
 	sendString("YAW DPS : ", huartMsg, 0);
 	sendFloat(output_mixer.IMU.yaw_dps, huartMsg, 1);
 
-	sendString("Right Motor PWM :",huartMsg,0);
+	sendString("1. Motor PWM :",huartMsg,0);
 	sendInt(output_mixer.PWM_US_MOTOR[0],huartMsg,1);
 
-	sendString("Left Motor PWM :", huartMsg, 0);
+	sendString("2. Motor PWM :", huartMsg, 0);
+	sendInt(output_mixer.PWM_US_MOTOR[1], huartMsg, 1);
+
+	sendString("3. Motor PWM :", huartMsg, 0);
 	sendInt(output_mixer.PWM_US_MOTOR[2], huartMsg, 1);
+
+	sendString("4. Motor PWM :", huartMsg, 0);
+	sendInt(output_mixer.PWM_US_MOTOR[3], huartMsg, 1);
 
 	sendString("IMU read Flag:",huartMsg,0);
 	if(kusbegi_flags->FLAG_IMU_READ_OK){

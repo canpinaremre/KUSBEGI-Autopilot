@@ -15,12 +15,12 @@
 #include <lib/flight_tasks/flight_task/flight_task.h>
 #include <lib/flight_modes/flight_mode/flight_mode.h>
 
-#define LOOP1DELAY_MS 10 		//100 Hz
-#define LOOP2DELAY_MS 20 		//50 Hz
-#define LOOP3DELAY_MS 40		//25 Hz
-#define LOOP4DELAY_MS 100		//10 Hz
-#define LOOP5DELAY_MS 1000		//1 Hz
-#define LOOP6DELAY_MS 5			//200 Hz
+#define LOOP1DELAY_MS 10
+#define LOOP2DELAY_MS 20
+#define LOOP3DELAY_MS 40
+#define LOOP4DELAY_MS 100
+#define LOOP5DELAY_MS 1000
+#define LOOP6DELAY_MS 900
 
 typedef enum{
 	MC_MODE_STABILIZE,

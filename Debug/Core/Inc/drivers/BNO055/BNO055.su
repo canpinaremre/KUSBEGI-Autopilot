@@ -4,7 +4,7 @@ BNO055.c:39:8:BNO055_Init	24	static
 BNO055.c:52:8:BNO055_Get_Page	24	static
 BNO055.c:70:8:BNO055_Set_Page	24	static
 BNO055.c:85:8:BNO055_Read_Eul	24	static
-BNO055.c:134:8:BNO055_Read_Qua	24	static
+BNO055.c:134:8:BNO055_Read_Qua	32	static
 BNO055.c:197:8:BNO055_Read_Acc	24	static
 BNO055.c:246:8:BNO055_Read_Mag	24	static
 BNO055.c:293:8:BNO055_Read_Gyr	24	static

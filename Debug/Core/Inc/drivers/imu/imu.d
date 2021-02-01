@@ -34,7 +34,8 @@ Core/Inc/drivers/imu/imu.o: ../Core/Inc/drivers/imu/imu.c \
  ../Core/Inc/module/i2c/i2c_read_write.h \
  ../Core/Inc/lib/parameters/parameters.h \
  ../Core/Inc/drivers/BMP280/BMP280.h \
- ../Core/Inc/drivers/BMP280/bmp280_defs.h
+ ../Core/Inc/drivers/BMP280/bmp280_defs.h \
+ ../Core/Inc/module/utility/utility_math.h
 
 ../Core/Inc/drivers/imu/imu.h:
 
@@ -107,3 +108,5 @@ Core/Inc/drivers/imu/imu.o: ../Core/Inc/drivers/imu/imu.c \
 ../Core/Inc/drivers/BMP280/BMP280.h:
 
 ../Core/Inc/drivers/BMP280/bmp280_defs.h:
+
+../Core/Inc/module/utility/utility_math.h:

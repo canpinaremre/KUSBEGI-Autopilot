@@ -10,10 +10,11 @@
 #include <drivers/BNO055/BNO055.h>
 #include <drivers/BMP280/BMP280.h>
 #include <lib/parameters/parameters.h>
+#include <module/utility/utility_math.h>
 
 typedef struct{
 	float eulerXYZ[3];							//Euler IMU output
-	float quaternionWXYZ[4];					//Quaternion IMU output
+	double quaternionWXYZ[4];					//Quaternion IMU output
 	float accelXYZ[3];
 	float magXYZ[3];
 	float liaXYZ[3];
@@ -24,7 +25,8 @@ typedef struct{
 	float yaw_dps;
 	uint32_t pressure;
 	double temperature;
-	//TODO: IMU setter
+	uint32_t last_read_time;
+	float deltaT;
 }IMU;
 
 

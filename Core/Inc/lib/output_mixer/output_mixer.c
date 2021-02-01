@@ -9,7 +9,7 @@
 int8_t init_output_mixer(OUTPUT_MIXER *output_mixer,I2C_HandleTypeDef *huartI2C){
 	int8_t rslt;
 
-	//Set PID values
+	/*Set PID values */
 	pid_roll.Kp = PID_ROLL_PITCH_KP;
 	pid_altitude.Kp = PID_ALTITUDE_KP;
 	pid_pitch.Kp = PID_ROLL_PITCH_KP;
@@ -24,11 +24,6 @@ int8_t init_output_mixer(OUTPUT_MIXER *output_mixer,I2C_HandleTypeDef *huartI2C)
 	pid_altitude.Kd = PID_ALTITUDE_KD;
 	pid_pitch.Kd = PID_ROLL_PITCH_KD;
 	pid_yaw.Kd = PID_YAW_KD;
-
-	pid_roll.tau = PID_TAU;
-	pid_altitude.tau = PID_TAU;
-	pid_pitch.tau = PID_TAU;
-	pid_yaw.tau = PID_TAU;
 
 	pid_roll.limMin = PID_ROLL_PITCH_LIM_MIN;
 	pid_altitude.limMin = PID_ALTITUDE_LIM_MIN;
@@ -50,18 +45,14 @@ int8_t init_output_mixer(OUTPUT_MIXER *output_mixer,I2C_HandleTypeDef *huartI2C)
 	pid_pitch.limMaxInt = PID_ROLL_PITCH_LIM_MAX_INT;
 	pid_yaw.limMaxInt = PID_YAW_LIM_MAX_INT;
 
-	pid_roll.T = SAMPLE_TIME_S;
-	pid_altitude.T = SAMPLE_TIME_S;
-	pid_pitch.T = SAMPLE_TIME_S;
-	pid_yaw.T = SAMPLE_TIME_S;
 
-	//Init PID
+	/*Init PID */
 	PIDController_Init(&pid_altitude);
 	PIDController_Init(&pid_roll);
 	PIDController_Init(&pid_pitch);
 	PIDController_Init(&pid_yaw);
 
-	//Init output_mixer
+	/*Init output_mixer */
 	output_mixer->PWM_US_MOTOR[0] = 0;
 	output_mixer->PWM_US_MOTOR[1] = 0;
 	output_mixer->PWM_US_MOTOR[2] = 0;
@@ -125,13 +116,13 @@ int8_t init_output_mixer(OUTPUT_MIXER *output_mixer,I2C_HandleTypeDef *huartI2C)
 
 	old_yaw = 0;
 
-	//init IMU
+	/*init IMU */
 	rslt = init_imu(&imu, huartI2C);
 	if(rslt != IMU_INIT_OK){
 		return rslt;
 	}
 
-	//init RC_input
+	/*init RC_input */
 	rslt = init_rc_input(&rc_input);
 	if (rslt != RC_INPUT_OK) {
 		return rslt;
@@ -140,15 +131,15 @@ int8_t init_output_mixer(OUTPUT_MIXER *output_mixer,I2C_HandleTypeDef *huartI2C)
 	return OUTPUT_MIXER_OK;
 }
 
-int8_t calculate_pid_values(OUTPUT_MIXER *output_mixer,IMU *imu){
+int8_t calculate_pid_values(OUTPUT_MIXER *output_mixer,IMU *imu,UART_HandleTypeDef* huartMsg){
 
 	output_mixer->MEASURE_YPRA[0] = imu->yaw_dps;
 	output_mixer->MEASURE_YPRA[1] = imu->ypr[1];
 	output_mixer->MEASURE_YPRA[2] = imu->ypr[2];
 
-	output_mixer->PID_YAW_OUTPUT = PIDController_Update(&pid_yaw,output_mixer->SETPOINT_YPRA[0],output_mixer->MEASURE_YPRA[0]);
-	output_mixer->PID_PITCH_OUTPUT = PIDController_Update(&pid_pitch,output_mixer->SETPOINT_YPRA[1],output_mixer->MEASURE_YPRA[1]);
-	output_mixer->PID_ROLL_OUTPUT = PIDController_Update(&pid_roll,output_mixer->SETPOINT_YPRA[2],output_mixer->MEASURE_YPRA[2]);
+	output_mixer->PID_YAW_OUTPUT = PIDController_Update(&pid_yaw,output_mixer->SETPOINT_YPRA[0],output_mixer->MEASURE_YPRA[0],huartMsg);
+	output_mixer->PID_PITCH_OUTPUT = PIDController_Update(&pid_pitch,output_mixer->SETPOINT_YPRA[1],output_mixer->MEASURE_YPRA[1],huartMsg);
+	output_mixer->PID_ROLL_OUTPUT = PIDController_Update(&pid_roll,output_mixer->SETPOINT_YPRA[2],output_mixer->MEASURE_YPRA[2],huartMsg);
 	//output_mixer->PID_ALTITUDE_OUTPUT = PIDController_Update(&pid_altitude,setpoint_altitude,imu->altitude);
 	output_mixer->PID_ALTITUDE_OUTPUT = output_mixer->SETPOINT_YPRA[3];
 	return OUTPUT_MIXER_OK;
@@ -210,10 +201,11 @@ int8_t stop_motors(OUTPUT_MIXER *output_mixer){
 	return 1;
 }
 
-int8_t update_pid(OUTPUT_MIXER *output_mixer) {
+int8_t update_pid(OUTPUT_MIXER *output_mixer,UART_HandleTypeDef* huartMsg) {
 	int8_t rslt;
+
 	/* Calculate PID*/
-	rslt = calculate_pid_values(output_mixer, &imu);
+	rslt = calculate_pid_values(output_mixer, &imu,huartMsg);
 
 	return rslt;
 }
@@ -236,6 +228,7 @@ int8_t update_imu(OUTPUT_MIXER *output_mixer, I2C_HandleTypeDef *huartI2C,
 
 int8_t update_barometer(OUTPUT_MIXER *output_mixer, I2C_HandleTypeDef *huartI2C){
 	int8_t rslt;
+
 	/* Read Barometer*/
 	rslt = read_barometer(&imu,huartI2C);
 	if (rslt != IMU_READ_OK) {

@@ -14,27 +14,31 @@
 #include <module/send_message/sendMsg.h>
 #include <lib/parameters/parameters.h>
 
+#define PID_ID_YAW 1
+#define PID_ID_PITCH 2
+#define PID_ID_ROLL 3
+#define PID_ID_ALT 4
 
 #define OUTPUT_MIXER_MAX_PWM 2000
 #define OUTPUT_MIXER_MIN_PWM 1000
 /* ROLL and PITCH PID VALUES */
-#define PID_ROLL_PITCH_KP  2.1f
-#define PID_ROLL_PITCH_KI  3.1f
-#define PID_ROLL_PITCH_KD  0.55f
+#define PID_ROLL_PITCH_KP  1.8f
+#define PID_ROLL_PITCH_KI  0.0f
+#define PID_ROLL_PITCH_KD  2.5f
 
 #define PID_ROLL_PITCH_LIM_MIN -500.0f
 #define PID_ROLL_PITCH_LIM_MAX  500.0f
 
-#define PID_ROLL_PITCH_LIM_MIN_INT -15.0f
-#define PID_ROLL_PITCH_LIM_MAX_INT  15.0f
+#define PID_ROLL_PITCH_LIM_MIN_INT -10.0f
+#define PID_ROLL_PITCH_LIM_MAX_INT  10.0f
 
 /* YAW PID VALUES*/
-#define PID_YAW_KP  1.0f
+#define PID_YAW_KP  1.5f
 #define PID_YAW_KI  0.0f
-#define PID_YAW_KD  0.25f
+#define PID_YAW_KD  0.0f
 
-#define PID_YAW_LIM_MIN -10.0f
-#define PID_YAW_LIM_MAX  10.0f
+#define PID_YAW_LIM_MIN -90.0f
+#define PID_YAW_LIM_MAX  90.0f
 
 #define PID_YAW_LIM_MIN_INT -5.0f
 #define PID_YAW_LIM_MAX_INT  5.0f
@@ -50,9 +54,6 @@
 #define PID_ALTITUDE_LIM_MIN_INT -5.0f
 #define PID_ALTITUDE_LIM_MAX_INT  5.0f
 
-/* PID SAMPLING VALUES FOR 100 Hz*/
-#define SAMPLE_TIME_S 0.01f
-#define PID_TAU 0.02f
 
 typedef struct{
 	uint16_t PWM_US_MOTOR[4];
@@ -75,16 +76,16 @@ float old_yaw;
 int8_t init_output_mixer(OUTPUT_MIXER *output_mixer,I2C_HandleTypeDef *huartI2C);
 
 /* This function calculates PID values with IMU and RC readings*/
-int8_t calculate_pid_values(OUTPUT_MIXER *output_mixer,IMU *imu);
+int8_t calculate_pid_values(OUTPUT_MIXER *output_mixer,IMU *imu,UART_HandleTypeDef* huartMsg);
 
 /* This function set motor pwm values*/
 int8_t set_motor_pwm_values(OUTPUT_MIXER *output_mixer);
 
-/* This ducntion stops motors*/
+/* This function stops motors*/
 int8_t stop_motors(OUTPUT_MIXER *output_mixer);
 
 /* This function updates the PID */
-int8_t update_pid(OUTPUT_MIXER *output_mixer);
+int8_t update_pid(OUTPUT_MIXER *output_mixer,UART_HandleTypeDef* huartMsg);
 
 /* This function updates the imu and output_mixer struct */
 int8_t update_imu(OUTPUT_MIXER *output_mixer, I2C_HandleTypeDef *huartI2C,KUSBEGI_FLAGS *kusbegi_flags);
