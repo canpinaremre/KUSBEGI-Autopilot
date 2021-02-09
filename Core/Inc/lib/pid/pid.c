@@ -81,9 +81,25 @@ float PIDController_Update(PIDController *pid, float setpoint, float measurement
 
     }
 
+//	sendString(" (measurement - pid->prevMeasurement) : ",huartMsg,0);
+//	sendFloat( (measurement - pid->prevMeasurement),huartMsg,1);
+//
+//	sendString(" pid->deltaT : ",huartMsg,0);
+//	sendFloat( pid->deltaT,huartMsg,1);
+//
+//	sendString(" pid->differentiator : ",huartMsg,0);
+//	sendFloat( pid->differentiator,huartMsg,1);
+
+
 	/* Store error and measurement for later use */
     pid->prevError       = error;
     pid->prevMeasurement = measurement;
+
+    /*
+     * Save last pid time for later use
+     */
+    pid->last_pid_time = HAL_GetTick();
+
 
 	/* Return controller output */
     return pid->out;

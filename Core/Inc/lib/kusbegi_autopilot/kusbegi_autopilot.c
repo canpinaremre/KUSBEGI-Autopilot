@@ -56,10 +56,10 @@ void kusbegi_loop(UART_HandleTypeDef* huartMsg,I2C_HandleTypeDef *huartI2C,UART_
 //		loop3(huartMsg,huartI2C,huartRC,kusbegi,&kusbegi_flags);
 //		last_tick_l3 = HAL_GetTick();
 //	}
-	if (HAL_GetTick() - last_tick_l4 >= LOOP4DELAY_MS) {
-		loop4(huartMsg,huartI2C,huartRC,kusbegi,&kusbegi_flags);
-		last_tick_l4 = HAL_GetTick();
-	}
+//	if (HAL_GetTick() - last_tick_l4 >= LOOP4DELAY_MS) {
+//		loop4(huartMsg,huartI2C,huartRC,kusbegi,&kusbegi_flags);
+//		last_tick_l4 = HAL_GetTick();
+//	}
 //	if (kusbegi_tick - last_tick_l5 >= LOOP5DELAY_MS) {
 //		loop5(huartMsg,huartI2C,huartRC,kusbegi,&kusbegi_flags);
 //		last_tick_l5 = HAL_GetTick();
